@@ -1,0 +1,11 @@
+server:
+  port: 8086
+hm:
+  db:
+    database: fts-transaction
+    host: 47.76.158.138
+    pw: 123
+  swagger:
+    title: 基金销售系统申购赎回撤单服务接口文档
+    description: 基金销售系统申购赎回撤单服务接口文档
+    package: com.github.JLQusername.controller

@@ -1,0 +1,11 @@
+server:
+  port: 8081
+hm:
+  db:
+    database: fts-account
+    host: 47.76.158.138
+    pw: 123
+  swagger:
+    title: 基金销售系统账户服务接口文档
+    description: 基金销售系统账户服务接口文档
+    package: com.github.JLQusername.controller
