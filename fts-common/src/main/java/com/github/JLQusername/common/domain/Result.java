@@ -1,4 +1,4 @@
-package com.github.JLQusername.common.utils;
+package com.github.JLQusername.common.domain;
 
 //统一响应结果
 import lombok.AllArgsConstructor;

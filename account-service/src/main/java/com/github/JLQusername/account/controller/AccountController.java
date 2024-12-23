@@ -1,8 +1,7 @@
 package com.github.JLQusername.account.controller;
 
-import com.github.JLQusername.common.utils.Result;
+import com.github.JLQusername.common.domain.Result;
 import com.github.JLQusername.account.domain.dto.CustomerDTO;
-import com.github.JLQusername.account.domain.Customer;
 import com.github.JLQusername.account.service.CustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -30,4 +29,9 @@ public class AccountController {
         boolean result = customerService.updateRiskLevel(fundAccount, riskLevel);
         return result ? Result.success() : Result.error("更新失败");
     }
+
+
+
+
+
 }

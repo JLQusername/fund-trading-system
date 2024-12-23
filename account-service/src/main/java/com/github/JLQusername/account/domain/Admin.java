@@ -7,10 +7,7 @@ import lombok.EqualsAndHashCode;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
-public class Customer extends User{
+public class Admin extends User{
     @TableId(type = IdType.ASSIGN_ID)
-    private Long fundAccount;
-    private String name;
-    private String idNumber;
-    private int riskLevel;
+    private Long adminAccount;
 }

@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.github.JLQusername.account.domain.Customer;
 import com.github.JLQusername.account.domain.dto.CustomerDTO;
+import com.github.JLQusername.account.domain.dto.LoginDTO;
 import com.github.JLQusername.account.mapper.CustomerMapper;
 import com.github.JLQusername.account.service.CustomerService;
 import com.github.JLQusername.common.utils.Md5Util;

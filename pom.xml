@@ -13,7 +13,6 @@
         <module>product-service</module>
         <module>transaction-service</module>
         <module>account-service</module>
-        <module>login-service</module>
         <module>settle-service</module>
         <module>fts-common</module>
         <module>fts-api</module>
