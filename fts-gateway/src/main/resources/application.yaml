@@ -8,4 +8,4 @@ hm:
     tokenTTL: 30m
   auth:
     excludePaths:
-      - /login/**
+      - /**

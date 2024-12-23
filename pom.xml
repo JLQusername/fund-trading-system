@@ -11,7 +11,7 @@
     <modules>
         <module>query-service</module>
         <module>product-service</module>
-        <module>subscription-redemption-service</module>
+        <module>transaction-service</module>
         <module>account-service</module>
         <module>login-service</module>
         <module>settle-service</module>
