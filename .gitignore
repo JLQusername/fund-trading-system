@@ -11,7 +11,7 @@ target/
 *.iws
 *.iml
 *.ipr
-log
+logs
 
 
 ### Eclipse ###
