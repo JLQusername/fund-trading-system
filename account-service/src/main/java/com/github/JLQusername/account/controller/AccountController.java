@@ -1,9 +1,9 @@
 package com.github.JLQusername.account.controller;
 
 import com.github.JLQusername.account.domain.Customer;
-import com.github.JLQusername.account.domain.TradingAccount;
 import com.github.JLQusername.account.domain.dto.BankcardDTO;
 import com.github.JLQusername.account.service.TradingAccountService;
+import com.github.JLQusername.api.Bankcard;
 import com.github.JLQusername.common.domain.Result;
 import com.github.JLQusername.account.domain.dto.CustomerDTO;
 import com.github.JLQusername.account.service.CustomerService;
@@ -61,5 +61,15 @@ public class AccountController {
     @GetMapping("/bankcards")
     public Result getBankcards(@RequestParam long fundAccount){
         return Result.success(tradingAccountService.getBankcards(fundAccount));
+    }
+
+    @PostMapping("/bankcard")
+    public Bankcard getBankcard(@RequestParam long tradingAccountId){
+        return tradingAccountService.getBankcardByTradingAccountId(tradingAccountId);
+    }
+
+    @PatchMapping("/balance")
+    public boolean updateBalance(@RequestBody Bankcard bankcard){
+        return tradingAccountService.updateBalance(bankcard);
     }
 }

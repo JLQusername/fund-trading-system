@@ -1,6 +1,6 @@
 server:
   port: 8086
-hm:
+fts:
   db:
     database: fts-transaction
     host: 47.76.158.138

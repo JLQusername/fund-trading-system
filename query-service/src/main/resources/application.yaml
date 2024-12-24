@@ -1,6 +1,6 @@
 server:
   port: 8084
-hm:
+fts:
   db:
     database: fts-query
     host: 47.76.158.138

@@ -2,7 +2,7 @@ package com.github.JLQusername.account.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
-import com.github.JLQusername.account.domain.Bankcard;
+import com.github.JLQusername.api.Bankcard;
 import com.github.JLQusername.account.domain.TradingAccount;
 import com.github.JLQusername.account.domain.dto.BankcardDTO;
 import com.github.JLQusername.account.domain.vo.BankcardVO;
@@ -66,5 +66,15 @@ public class TradingAccountServiceImpl implements TradingAccountService {
         queryWrapper.eq("fund_account", fundAccount).eq("is_deleted", false);
         return tradingAccountMapper.selectList(queryWrapper).stream()
                 .map(BankcardVO::new).collect(Collectors.toList());
+    }
+
+    @Override
+    public Bankcard getBankcardByTradingAccountId(long tradingAccountId) {
+        return bankcardMapper.getBankcardByTradingAccountId(tradingAccountId);
+    }
+
+    @Override
+    public boolean updateBalance(Bankcard bankcard) {
+        return bankcardMapper.updateById(bankcard) > 0;
     }
 }

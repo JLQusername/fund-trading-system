@@ -10,7 +10,7 @@ import lombok.AllArgsConstructor;
 public class TradingAccount {
     @TableId(type = IdType.ASSIGN_ID)
     private Long TradingAccountId;
-    private Long fundAccount;
+    private long fundAccount;
     private String bankcardNumber;
     private boolean isDeleted;
 }

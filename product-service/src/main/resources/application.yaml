@@ -1,6 +1,6 @@
 server:
   port: 8083
-hm:
+fts:
   db:
     database: fts-product
     host: 47.76.158.138
