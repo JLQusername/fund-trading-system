@@ -1,18 +1,22 @@
 package com.github.JLQusername.account.controller;
 
 import com.github.JLQusername.account.domain.Customer;
+import com.github.JLQusername.account.domain.TradingAccount;
+import com.github.JLQusername.account.domain.dto.BankcardDTO;
+import com.github.JLQusername.account.service.TradingAccountService;
 import com.github.JLQusername.common.domain.Result;
 import com.github.JLQusername.account.domain.dto.CustomerDTO;
 import com.github.JLQusername.account.service.CustomerService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/account")
+@RequiredArgsConstructor
 public class AccountController {
 
-    @Autowired
-    private CustomerService customerService;
+    private final CustomerService customerService;
+    private final TradingAccountService tradingAccountService;
 
     @PostMapping("/create")
     public Result createAccount(@RequestBody CustomerDTO customerDTO){
@@ -37,5 +41,25 @@ public class AccountController {
                                  @RequestParam(defaultValue = "10") int pageSize,
                                  @RequestParam(defaultValue = "") String key){
         return Result.success(customerService.getCustomers(pageNum, pageSize, key));
+    }
+
+    @PostMapping("/add_bankcard")
+    public Result addBankcard(@RequestBody BankcardDTO bankcardDTO){
+        long result = tradingAccountService.addBankcard(bankcardDTO);
+        if(result > 2)
+            return Result.success(result);
+        else if(result == 1)
+            return Result.error("该卡号已有交易账户");
+        return Result.error("未知错误");
+    }
+
+    @DeleteMapping("/delete_bankcard")
+    public Result deleteBankcard(@RequestParam long tradingAccountId){
+        return tradingAccountService.deleteBankcard(tradingAccountId) ? Result.success() : Result.error("删除失败");
+    }
+
+    @GetMapping("/bankcards")
+    public Result getBankcards(@RequestParam long fundAccount){
+        return Result.success(tradingAccountService.getBankcards(fundAccount));
     }
 }
