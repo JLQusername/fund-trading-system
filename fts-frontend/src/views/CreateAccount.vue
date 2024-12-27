@@ -1,10 +1,10 @@
 <script lang="ts" setup>
 import { ref } from 'vue';
 import { ElForm, ElFormItem, ElInput, ElButton, ElMessageBox, ElMessage } from 'element-plus';
-import { sendCodeService } from '@/api/login';
 import { useRouter } from 'vue-router';
 import type { CustomerDTO } from '@/types/account';
 import RiskAssessment from '@/components/RiskAssessment.vue';
+import { createAccountService } from '@/api/account';
 
 // 表单数据模型
 const form = ref({
@@ -24,7 +24,7 @@ const isTestLevel = ref(true);
 const rules = {
   phoneNumber: [
     { required: true, message: '手机号不能为空', trigger: 'blur' },
-    { pattern: /^1[3-9]\d{9}$/, message: '请输入有效的手机号', trigger: 'blur' }
+    { pattern: /^1\d{10}$/, message: '手机号必须是11位数字', trigger: 'blur' },
   ],
   password: [
     { required: true, message: '密码不能为空', trigger: 'blur' },
@@ -34,25 +34,45 @@ const rules = {
     { required: true, message: '身份证号码不能为空', trigger: 'blur' },
     { pattern: /^\d{17}(\d|X|x)$/, message: '请输入有效的身份证号码', trigger: 'blur' }
   ],
-  confirmPassword: [
-    { required: true, message: '请确认密码', trigger: 'blur' },
-  ],
   name: [
     { required: true, message: '姓名不能为空', trigger: 'blur' },
-  ],
-  code: [
-    { required: true, message: '请输入验证码', trigger: 'blur' },
   ]
 };
 const formRef = ref();
-const handleSubmit = () => {
-  formRef.value.validate((valid: boolean) => {
+
+const sendCodeService =  () => {
+  setTimeout(() => {
+    ElMessage.success('验证码已发送');
+    }, 500);
+};
+
+const handleSubmit = async() => {
+  formRef.value.validate(async (valid: boolean) => {
     if (valid) {
-      // 执行提交逻辑，比如调用API
-      console.log('表单验证通过，提交数据：', form.value);
-    } else {
-      console.log('表单验证失败，请检查输入');
-      return false;
+      if(form.value.password === ''){
+        ElMessage.warning('密码不可以为空');
+        return;
+      }
+      if(code.value !== '123'){
+        ElMessage.error('验证码错误');
+        return;
+      }
+      if(form.value.password !== confirmPassword.value)
+        ElMessage.error('两次密码不一致');
+      else
+        ElMessageBox.confirm('是否确认开户？', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning',
+        }).then(async () => {
+          await createAccountService(form.value);
+          ElMessage.success('开户成功');
+          router.push('/login');
+        }).catch(() => {
+          ElMessage.info('开户失败');
+        })
+    }else{
+      ElMessage.error('请输入正确的信息');
     }
   });
 };
@@ -60,7 +80,6 @@ const handleSubmit = () => {
 const handleLevelChange = (level: number) => {
   form.value.riskLevel = level;
 };
-
 </script>
 
 <template>
@@ -73,10 +92,10 @@ const handleLevelChange = (level: number) => {
       <el-form-item label="手机号" prop="phoneNumber">
         <el-input v-model="form.phoneNumber" placeholder="请输入手机号"></el-input>
       </el-form-item>
-      <el-form-item label="验证码" prop="code">
+      <el-form-item label="验证码" :rules="[{ required: true, message: '请输入验证码', trigger: 'blur' }]">
         <el-input v-model="code" placeholder="请输入验证码">
           <template #append>
-            <el-button @click="sendCodeService(form.phoneNumber)" type="primary" size="small">发送验证码</el-button>
+            <el-button @click="sendCodeService" type="primary" size="small">发送验证码</el-button>
           </template>
         </el-input>
       </el-form-item>
@@ -86,7 +105,7 @@ const handleLevelChange = (level: number) => {
       <el-form-item label="密码" prop="password">
         <el-input v-model="form.password" placeholder="请输入密码" type="password" maxlength="16"></el-input>
       </el-form-item>
-      <el-form-item label="确认密码" prop="confirmPassword">
+      <el-form-item label="确认密码" :rules = "[{ required: true, message: '请确认密码', trigger: 'blur' }]">
         <el-input v-model="confirmPassword" placeholder="请确认密码" type="password" ></el-input>
       </el-form-item>
       <el-form-item>
