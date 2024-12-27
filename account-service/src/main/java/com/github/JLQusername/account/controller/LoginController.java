@@ -15,16 +15,10 @@ public class LoginController {
 
     @PostMapping
     public Result login(@RequestBody LoginDTO loginDTO) {
-        int login = loginService.checkPassword(loginDTO);
-        if(login == 0)
-            return Result.success();
-        else if(login == 1)
-            return Result.error("手机号没有匹配的账号");
-        else if(login == 2)
-            return Result.error("密码错误");
-        else if(login == 3)
-            return Result.error("用户类型错误");
-        return Result.error("未知错误");
+        String loginRes = loginService.checkPassword(loginDTO);
+        if(loginRes.length() > 30)
+            return Result.success(loginRes);
+        return Result.error(loginRes);
     }
 
     @GetMapping("/verification")

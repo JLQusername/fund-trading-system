@@ -1,11 +1,8 @@
 server:
   port: 8080
-hm:
-  jwt:
-    location: classpath:fts.jks
-    alias: hmall
-    password: hmall123
-    tokenTTL: 30m
   auth:
     excludePaths:
       - /**
+spring:
+  main:
+    web-application-type: reactive

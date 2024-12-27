@@ -11,6 +11,10 @@ import com.github.JLQusername.account.service.LoginService;
 import com.github.JLQusername.common.utils.Md5Util;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import com.github.JLQusername.common.utils.JwtUtil;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -21,25 +25,40 @@ public class LoginServiceImpl implements LoginService {
     private final AdminMapper adminMapper;
 
     @Override
-    public int checkPassword(LoginDTO loginDTO) {
+    public String checkPassword(LoginDTO loginDTO) {
         String password;
         if (loginDTO.getUserType() == 1) { // Customer
             QueryWrapper<Customer> queryWrapper = new QueryWrapper<>();
             queryWrapper.eq("phone_number", loginDTO.getPhoneNumber());
             Customer customer = customerMapper.selectOne(queryWrapper);
             if (customer == null)
-                return 1; // 用户不存在
+                return "该手机号暂未开户";
             password = customer.getPassword();
+            if(Md5Util.checkPassword(loginDTO.getPassword(), password)) {
+                Map<String, Object> claims = new HashMap<>();
+                claims.put("fundAccount", customer.getFundAccount());
+                claims.put("phoneNumber", loginDTO.getPhoneNumber());
+                claims.put("name", customer.getName());
+                claims.put("riskLevel", customer.getRiskLevel());
+                return JwtUtil.genToken(claims);
+            }else
+                return "密码错误"; // 密码错误
         } else if (loginDTO.getUserType() == 2) { // Admin
             QueryWrapper<Admin> queryWrapper = new QueryWrapper<>();
             queryWrapper.eq("phone_number", loginDTO.getPhoneNumber());
             Admin admin = adminMapper.selectOne(queryWrapper);
             if (admin == null)
-                return 1; // 用户不存在
+                return "该手机号暂未注册管理员";
             password = admin.getPassword();
+            if(Md5Util.checkPassword(loginDTO.getPassword(), password)) {
+                Map<String, Object> claims = new HashMap<>();
+                claims.put("adminAccount", admin.getAdminAccount());
+                claims.put("phoneNumber", loginDTO.getPhoneNumber());
+                return JwtUtil.genToken(claims);
+            }else
+                return "密码错误"; // 密码错误
         } else
-            return 3; // 非法的用户类型
-        return Md5Util.checkPassword(loginDTO.getPassword(), password) ? 0 : 2; // 密码错误
+            return "非法用户类型"; // 非法的用户类型
     }
 
     @Override

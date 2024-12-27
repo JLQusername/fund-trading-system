@@ -3,7 +3,7 @@ package com.github.JLQusername.account.service;
 import com.github.JLQusername.account.domain.dto.LoginDTO;
 
 public interface LoginService {
-    int checkPassword(LoginDTO loginDTO);
+    String checkPassword(LoginDTO loginDTO);
 
     boolean isVaildPhoneNumber(String phoneNumber);
 
