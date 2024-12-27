@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { ElForm, ElFormItem, ElInput, ElButton, ElMessage } from 'element-plus';
-import { resetPwService } from '@/api/login';
+import { resetPwService,sendCodeService } from '@/api/login';
 import type { LoginDTO } from '@/types/login';
 import { useRouter } from 'vue-router';
   
@@ -32,26 +32,19 @@ const rules = {
   ],
   password: [
     { required: true, message: '请输入密码', trigger: 'blur' },
+    { min: 3, max: 16, message: '密码长度在6到16位之间', trigger: 'blur' },
   ],
   confirmPassword: [
     { required: true, message: '请确认密码', trigger: 'blur' },
   ]
 };
-
-// 发送验证码
-const sendCode = () => {
-  if (!form.value.phoneNumber) {
-    ElMessage.error('请先输入手机号');
-    return;
-  }
-  // 模拟发送验证码请求
-  setTimeout(() => {
-    ElMessage.success('验证码已发送');
-  }, 500);
-};
   
 // 提交表单
 const handleSubmit = async () => {
+  if(form.value.password === ''){
+    ElMessage.warning('密码不可以为空');
+    return;
+  }
   if(form.value.code !== '123'){
     ElMessage.error('验证码错误');
     return;
@@ -80,23 +73,23 @@ const handleSubmit = async () => {
       <h3 style="text-align: center">找回密码</h3>
       <el-form :model="form" :rules="rules">
         <el-form-item label="手机号" prop="phoneNumber">
-            <el-input v-model="form.phoneNumber" placeholder="请输入手机号" />
+          <el-input v-model="form.phoneNumber" placeholder="请输入手机号" />
         </el-form-item>
         <el-form-item label="验证码" prop="code">
-            <el-input v-model="form.code" placeholder="请输入验证码">
+          <el-input v-model="form.code" placeholder="请输入验证码">
             <template #append>
-                <el-button @click="sendCode" type="primary" size="small">发送验证码</el-button>
+              <el-button @click="sendCodeService(form.phoneNumber)" type="primary" size="small">发送验证码</el-button>
             </template>
-            </el-input>
+          </el-input>
         </el-form-item>
         <el-form-item label="新密码" prop="password">
-            <el-input v-model="form.password" type="password" placeholder="请输入新密码" />
+          <el-input v-model="form.password" type="password" placeholder="请输入新密码" />
         </el-form-item>
         <el-form-item label="确认密码" prop="confirmPassword">
-            <el-input v-model="form.confirmPassword" type="password" placeholder="请确认密码" />
+          <el-input v-model="form.confirmPassword" type="password" placeholder="请确认密码" />
         </el-form-item>
         <el-form-item>
-            <el-button type="primary" @click="handleSubmit" style="width: 100%">提交</el-button>
+          <el-button type="primary" @click="handleSubmit" style="width: 100%">提交</el-button>
         </el-form-item>
       </el-form>
     </el-card>
@@ -120,10 +113,6 @@ const handleSubmit = async () => {
   height: 400px;
   width: 500px;
   margin-top: 100px;
-}
-
-.login-title {
-  text-align: center
 }
 </style>
   
