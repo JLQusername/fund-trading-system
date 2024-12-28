@@ -1,8 +1,11 @@
 package com.github.JLQusername.account.controller;
 
+import com.github.JLQusername.account.domain.Admin;
 import com.github.JLQusername.account.domain.Customer;
+import com.github.JLQusername.account.domain.User;
 import com.github.JLQusername.account.domain.dto.BankcardDTO;
 import com.github.JLQusername.account.domain.dto.UpdateInfoDTO;
+import com.github.JLQusername.account.service.AdminService;
 import com.github.JLQusername.account.service.TradingAccountService;
 import com.github.JLQusername.api.Bankcard;
 import com.github.JLQusername.common.domain.Result;
@@ -17,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 public class AccountController {
 
     private final CustomerService customerService;
+    private final AdminService adminService;
     private final TradingAccountService tradingAccountService;
 
     @PostMapping("/create")
@@ -70,5 +74,15 @@ public class AccountController {
     @PatchMapping("/balance")
     public boolean updateBalance(@RequestBody Bankcard bankcard){
         return tradingAccountService.updateBalance(bankcard);
+    }
+
+    @PostMapping("/create_admin")
+    public boolean createAdmin(@RequestBody Admin user){
+        return adminService.createAdmin(user);
+    }
+
+    @GetMapping("/total")
+    public Result getTotal(){
+        return Result.success(customerService.count());
     }
 }

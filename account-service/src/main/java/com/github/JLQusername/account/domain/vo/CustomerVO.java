@@ -5,13 +5,13 @@ import lombok.Data;
 
 @Data
 public class CustomerVO {
-    private Long fundAccount;
+    private String fundAccount;
     private String name;
     private String phoneNumber;
     private int riskLevel;
 
     public CustomerVO(Customer customer) {
-        this.fundAccount = customer.getFundAccount();
+        this.fundAccount = customer.getFundAccount().toString();
         this.name = customer.getName();
         this.phoneNumber = customer.getPhoneNumber();
         this.riskLevel = customer.getRiskLevel();

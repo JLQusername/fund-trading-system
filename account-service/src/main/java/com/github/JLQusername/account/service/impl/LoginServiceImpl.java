@@ -52,7 +52,7 @@ public class LoginServiceImpl implements LoginService {
             password = admin.getPassword();
             if(Md5Util.checkPassword(loginDTO.getPassword(), password)) {
                 Map<String, Object> claims = new HashMap<>();
-                claims.put("adminAccount", admin.getAdminAccount());
+                claims.put("adminAccount", admin.getAdminAccount().toString());
                 claims.put("phoneNumber", loginDTO.getPhoneNumber());
                 return JwtUtil.genToken(claims);
             }else

@@ -16,7 +16,7 @@ public class LoginController {
     @PostMapping
     public Result login(@RequestBody LoginDTO loginDTO) {
         String loginRes = loginService.checkPassword(loginDTO);
-        if(loginRes.length() > 30)
+        if(loginRes.length() > 15)
             return Result.success(loginRes);
         return Result.error(loginRes);
     }

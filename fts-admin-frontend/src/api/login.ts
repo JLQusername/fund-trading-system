@@ -11,7 +11,7 @@ export function resetPwService(data: LoginDTO) {
 }
 
 export function verificationService(phoneNumber: string) {
-    return request.get('/login/verification', { params: { phoneNumber } });
+    return request.get('/login/admin_verification', { params: { phoneNumber } });
 }
 
 export function sendCodeService(phoneNumber: string) {
