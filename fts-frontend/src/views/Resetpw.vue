@@ -12,12 +12,12 @@ interface FormData {
   confirmPassword: string;
 }
 
-const form = ref({
+const form = ref<FormData>({
   phoneNumber: '',
   code: '',
   password: '',
   confirmPassword: '',
-} as FormData);
+});
   
 const router = useRouter();
 

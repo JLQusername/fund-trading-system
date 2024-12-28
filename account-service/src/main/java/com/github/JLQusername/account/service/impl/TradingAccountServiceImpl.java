@@ -23,13 +23,13 @@ public class TradingAccountServiceImpl implements TradingAccountService {
     private final TradingAccountMapper tradingAccountMapper;
 
     @Override
-    public long addBankcard(BankcardDTO bankcardDTO) {
+    public String addBankcard(BankcardDTO bankcardDTO) {
         QueryWrapper<TradingAccount> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("bankcard_number", bankcardDTO.getBankcardNumber())
                 .eq("is_deleted", false);
         int count = tradingAccountMapper.selectCount(queryWrapper);
         if(count > 0)
-            return 1;// 该卡号现在已有交易账户
+            return "该卡号已有交易账户";// 该卡号现在已有交易账户
         queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("fund_account", bankcardDTO.getFundAccount())
                 .eq("bankcard_number", bankcardDTO.getBankcardNumber());
@@ -42,13 +42,13 @@ public class TradingAccountServiceImpl implements TradingAccountService {
                     .eq("bankcard_number", bankcardDTO.getBankcardNumber())) == 0)
                 bankcardMapper.insert(new Bankcard(bankcardDTO.getBankcardNumber(), 200));
             //返回插入后的主键
-            return tradingAccount.getTradingAccountId();
+            return tradingAccount.getTradingAccountId().toString();
         } else if(tradingAccount.isDeleted()){
             tradingAccount.setDeleted(false);
             tradingAccountMapper.updateById(tradingAccount);
-            return tradingAccount.getTradingAccountId();
+            return tradingAccount.getTradingAccountId().toString();
         }else{
-            return 2; // 未知错误
+            return "未知错误"; // 未知错误
         }
     }
 

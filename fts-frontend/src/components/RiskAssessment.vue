@@ -1,7 +1,6 @@
 <script lang="ts" setup>
 import { ref } from 'vue';
 import { ElForm, ElFormItem, ElRadioGroup, ElRadio, ElButton } from 'element-plus';
-import { defineEmits } from 'vue';
 
 const emit = defineEmits();
   

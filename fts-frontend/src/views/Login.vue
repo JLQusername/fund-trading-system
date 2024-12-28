@@ -34,8 +34,8 @@ const login = async () => {
   tokenStore.setToken(res.data);
   const decode = jwtDecode(res.data) as {claims: CustomerInfo};
   userInfoStore.setInfo(decode.claims);
-  console.log(userInfoStore.info);
   ElMessage.success("登录成功");
+  router.push('/info');
 };
 </script>
 
@@ -55,7 +55,7 @@ const login = async () => {
           <el-button type="primary" @click="login" style="width: 48.5%;">登录</el-button>
           <el-button type="primary" plain @click="router.push('/resetpw')" style="width: 48.5%;">忘记密码</el-button>
         </el-form-item>
-        <el-button type="success" @click="login" style="width:100%">开户</el-button>
+        <el-button type="success" @click="router.push('/create')" style="width:100%">开户</el-button>
       </el-form>  
     </el-card>
   </div>

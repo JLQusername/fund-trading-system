@@ -7,7 +7,7 @@ import com.github.JLQusername.account.domain.vo.BankcardVO;
 import java.util.List;
 
 public interface TradingAccountService {
-    long addBankcard(BankcardDTO bankcardDTO);
+    String addBankcard(BankcardDTO bankcardDTO);
 
     boolean deleteBankcard(long tradingAccountId);
 

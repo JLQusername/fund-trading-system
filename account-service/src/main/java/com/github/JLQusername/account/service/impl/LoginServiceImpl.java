@@ -36,7 +36,7 @@ public class LoginServiceImpl implements LoginService {
             password = customer.getPassword();
             if(Md5Util.checkPassword(loginDTO.getPassword(), password)) {
                 Map<String, Object> claims = new HashMap<>();
-                claims.put("fundAccount", customer.getFundAccount());
+                claims.put("fundAccount", customer.getFundAccount().toString());
                 claims.put("phoneNumber", loginDTO.getPhoneNumber());
                 claims.put("name", customer.getName());
                 claims.put("riskLevel", customer.getRiskLevel());

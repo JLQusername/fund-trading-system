@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia';
-import { ref } from 'vue';
+import { ref, type Ref } from 'vue';
 import piniaPluginPersistedstate from 'pinia-plugin-persistedstate';
 import type { CustomerInfo } from '@/types/login';
 

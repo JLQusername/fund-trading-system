@@ -2,6 +2,7 @@ package com.github.JLQusername.account.controller;
 
 import com.github.JLQusername.account.domain.Customer;
 import com.github.JLQusername.account.domain.dto.BankcardDTO;
+import com.github.JLQusername.account.domain.dto.UpdateInfoDTO;
 import com.github.JLQusername.account.service.TradingAccountService;
 import com.github.JLQusername.api.Bankcard;
 import com.github.JLQusername.common.domain.Result;
@@ -20,8 +21,8 @@ public class AccountController {
 
     @PostMapping("/create")
     public Result createAccount(@RequestBody CustomerDTO customerDTO){
-        boolean result = customerService.createAccount(customerDTO);
-        return result ? Result.success() : Result.error("该手机号或身份证号已开户");
+        long result = customerService.createAccount(customerDTO);
+        return result == 0L ? Result.error("该手机号或身份证号已开户") : Result.success(result);
     }
 
     @PatchMapping("/risk_level")
@@ -31,9 +32,9 @@ public class AccountController {
     }
 
     @PutMapping("/info")
-    public Result updateInfo(@RequestBody Customer customer){
-        boolean result = customerService.updateInfo(customer);
-        return result ? Result.success() : Result.error("该手机号或身份证号已有用户使用");
+    public Result updateInfo(@RequestBody UpdateInfoDTO updateInfoDTO){
+        boolean result = customerService.updateInfo(updateInfoDTO);
+        return result ? Result.success() : Result.error("该手机号已有客户使用");
     }
 
     @GetMapping("/customers")
@@ -45,27 +46,25 @@ public class AccountController {
 
     @PostMapping("/add_bankcard")
     public Result addBankcard(@RequestBody BankcardDTO bankcardDTO){
-        long result = tradingAccountService.addBankcard(bankcardDTO);
-        if(result > 2)
+        String result = tradingAccountService.addBankcard(bankcardDTO);
+        if(result.length() > 15)
             return Result.success(result);
-        else if(result == 1)
-            return Result.error("该卡号已有交易账户");
-        return Result.error("未知错误");
+        return Result.error(result);
     }
 
     @DeleteMapping("/delete_bankcard")
-    public Result deleteBankcard(@RequestParam long tradingAccountId){
-        return tradingAccountService.deleteBankcard(tradingAccountId) ? Result.success() : Result.error("删除失败");
+    public Result deleteBankcard(@RequestParam String tradingAccountId){
+        return tradingAccountService.deleteBankcard(Long.parseLong(tradingAccountId)) ? Result.success() : Result.error("删除失败");
     }
 
     @GetMapping("/bankcards")
-    public Result getBankcards(@RequestParam long fundAccount){
-        return Result.success(tradingAccountService.getBankcards(fundAccount));
+    public Result getBankcards(@RequestParam String fundAccount){
+        return Result.success(tradingAccountService.getBankcards(Long.parseLong(fundAccount)));
     }
 
     @PostMapping("/bankcard")
-    public Bankcard getBankcard(@RequestParam long tradingAccountId){
-        return tradingAccountService.getBankcardByTradingAccountId(tradingAccountId);
+    public Bankcard getBankcard(@RequestParam String tradingAccountId){
+        return tradingAccountService.getBankcardByTradingAccountId(Long.parseLong(tradingAccountId));
     }
 
     @PatchMapping("/balance")

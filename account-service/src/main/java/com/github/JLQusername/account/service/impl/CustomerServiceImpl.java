@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.github.JLQusername.account.domain.Customer;
 import com.github.JLQusername.account.domain.dto.CustomerDTO;
+import com.github.JLQusername.account.domain.dto.UpdateInfoDTO;
 import com.github.JLQusername.account.domain.vo.CustomerVO;
 import com.github.JLQusername.account.mapper.CustomerMapper;
 import com.github.JLQusername.account.service.CustomerService;
@@ -27,17 +28,18 @@ public class CustomerServiceImpl extends ServiceImpl<CustomerMapper, Customer> i
     private CustomerMapper customerMapper;
 
     @Override
-    public boolean createAccount(CustomerDTO customerDTO) {
+    public Long createAccount(CustomerDTO customerDTO) {
         //查询phoneNumber或idNumber是否已在数据库存在
         QueryWrapper<Customer> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("phone_number", customerDTO.getPhoneNumber())
                 .or().eq("id_number", customerDTO.getIdNumber());
         if (count(queryWrapper) > 0)
-            return false;
+            return 0L;
         customerDTO.setPassword(Md5Util.getMD5String(customerDTO.getPassword()));
         Customer customer = new Customer();
         BeanUtils.copyProperties(customerDTO, customer);
-        return save(customer);
+        save(customer);
+        return customer.getFundAccount();
     }
 
     @Override
@@ -49,15 +51,17 @@ public class CustomerServiceImpl extends ServiceImpl<CustomerMapper, Customer> i
     }
 
     @Override
-    public boolean updateInfo(Customer customer) {
+    public boolean updateInfo(UpdateInfoDTO updateInfoDTO) {
         //查询phoneNumber或idNumber是否已在数据库存在
         QueryWrapper<Customer> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("phone_number", customer.getPhoneNumber())
-                .or().eq("id_number", customer.getIdNumber());
+        queryWrapper.eq("phone_number", updateInfoDTO.getPhoneNumber());
         if (count(queryWrapper) > 0)
             return false;
-        UpdateWrapper<Customer> updateWrapper = getCustomerUpdateWrapper(customer);
-        return update(customer, updateWrapper);
+        UpdateWrapper<Customer> updateWrapper = new UpdateWrapper<>();
+        updateWrapper.eq("fund_account", updateInfoDTO.getFundAccount())
+                .set("phone_number", updateInfoDTO.getPhoneNumber())
+                .set("risk_level", updateInfoDTO.getRiskLevel());
+        return update(updateWrapper);
     }
 
     @Override

@@ -4,7 +4,7 @@ import { ElForm, ElFormItem, ElInput, ElButton, ElMessageBox, ElMessage } from '
 import { useRouter } from 'vue-router';
 import type { CustomerDTO } from '@/types/account';
 import RiskAssessment from '@/components/RiskAssessment.vue';
-import { createAccountService } from '@/api/account';
+import { createAccountService, addBankcardService } from '@/api/account';
 
 // 表单数据模型
 const form = ref({
@@ -13,12 +13,14 @@ const form = ref({
   idNumber: '',
   name:'',
   riskLevel:0,
-} as CustomerDTO);
+  confirmPassword:'',
+  bankcardNumber:'',
+  code:'',
+});
 
-const confirmPassword = ref('');
-const code = ref('');
 const router = useRouter();
 const isTestLevel = ref(true);
+const isBankcardNumber = ref(true);
 
 // 表单验证规则
 const rules = {
@@ -36,6 +38,16 @@ const rules = {
   ],
   name: [
     { required: true, message: '姓名不能为空', trigger: 'blur' },
+  ],
+  bankcardNumber:[
+    { required: true, message: '银行卡号不能为空', trigger: 'blur' },
+    { pattern: /^\d{16}$/, message: '银行卡号必须是16位数字', trigger: 'blur' },
+  ],
+  code: [
+    { required: true, message: '请输入验证码', trigger: 'blur' }
+  ],
+  confirmPassword:[
+    { required: true, message: '请确认密码', trigger: 'blur' }
   ]
 };
 const formRef = ref();
@@ -53,11 +65,11 @@ const handleSubmit = async() => {
         ElMessage.warning('密码不可以为空');
         return;
       }
-      if(code.value !== '123'){
+      if(form.value.code !== '123'){
         ElMessage.error('验证码错误');
         return;
       }
-      if(form.value.password !== confirmPassword.value)
+      if(form.value.password !== form.value.confirmPassword)
         ElMessage.error('两次密码不一致');
       else
         ElMessageBox.confirm('是否确认开户？', '提示', {
@@ -65,11 +77,20 @@ const handleSubmit = async() => {
           cancelButtonText: '取消',
           type: 'warning',
         }).then(async () => {
-          await createAccountService(form.value);
+          let res = await createAccountService({
+              phoneNumber: form.value.phoneNumber,
+              password: form.value.password,
+              name: form.value.name,
+              idNumber: form.value.idNumber,
+              riskLevel: isTestLevel.value ? form.value.riskLevel : 0,
+          });
           ElMessage.success('开户成功');
           router.push('/login');
-        }).catch(() => {
-          ElMessage.info('开户失败');
+          if(isBankcardNumber)
+            await addBankcardService({
+              bankcardNumber: form.value.bankcardNumber,
+              fundAccount: res.data,
+          });
         })
     }else{
       ElMessage.error('请输入正确的信息');
@@ -92,8 +113,8 @@ const handleLevelChange = (level: number) => {
       <el-form-item label="手机号" prop="phoneNumber">
         <el-input v-model="form.phoneNumber" placeholder="请输入手机号"></el-input>
       </el-form-item>
-      <el-form-item label="验证码" :rules="[{ required: true, message: '请输入验证码', trigger: 'blur' }]">
-        <el-input v-model="code" placeholder="请输入验证码">
+      <el-form-item label="验证码" prop="code">
+        <el-input v-model="form.code" placeholder="请输入验证码">
           <template #append>
             <el-button @click="sendCodeService" type="primary" size="small">发送验证码</el-button>
           </template>
@@ -105,15 +126,23 @@ const handleLevelChange = (level: number) => {
       <el-form-item label="密码" prop="password">
         <el-input v-model="form.password" placeholder="请输入密码" type="password" maxlength="16"></el-input>
       </el-form-item>
-      <el-form-item label="确认密码" :rules = "[{ required: true, message: '请确认密码', trigger: 'blur' }]">
-        <el-input v-model="confirmPassword" placeholder="请确认密码" type="password" ></el-input>
+      <el-form-item label="确认密码" prop="confirmPassword">
+        <el-input v-model="form.confirmPassword" placeholder="请确认密码" type="password" ></el-input>
       </el-form-item>
       <el-form-item>
         <el-button type="danger" @click="isTestLevel = !isTestLevel">{{isTestLevel ? "跳过风险评估" : "进行风险评估（可跳过）"}}</el-button>
       </el-form-item>
-      <div v-if="isTestLevel">
-        <RiskAssessment @update:level="handleLevelChange" style="margin-left: 110px;"/>
-      </div>
+      <el-form-item v-if="isTestLevel">
+        <RiskAssessment @update:level="handleLevelChange" />
+      </el-form-item>
+      <el-form-item >
+        <el-button type="warning" @click="isBankcardNumber = !isBankcardNumber" style=" margin-top: 20px;">
+          {{isBankcardNumber ? "跳过添加银行卡" : "添加银行卡（可跳过）"}}
+        </el-button>
+      </el-form-item>
+      <el-form-item v-if="isBankcardNumber" label="银行卡号" prop="bankcardNumber">
+        <el-input v-model="form.bankcardNumber" placeholder="请输入银行卡号"></el-input>
+      </el-form-item>
       <el-form-item>
         <el-button type="primary" @click="handleSubmit" style="width: 15%; margin-top: 20px;">确定开户</el-button>
       </el-form-item>
@@ -124,7 +153,7 @@ const handleLevelChange = (level: number) => {
 <style scoped>
 .create-account-container {
   padding: 2px;
-  background-color: #cad1d82e;
+  background-color: #f2f6fc;
   min-height: 100vh
 }
 
