@@ -1,6 +1,7 @@
 package com.github.JLQusername.transaction.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.github.JLQusername.api.Bankcard;
 import com.github.JLQusername.api.OurSystem;
 import com.github.JLQusername.api.client.AccountClient;
@@ -82,6 +83,28 @@ public class TransactionServiceImpl implements TransactionService {
 
     @Override
     public boolean cancelTransaction(long transactionId) {
+//        Subscription subscription = subscriptionMapper.selectById(transactionId);
+//        OurSystem system = settleClient.getSystem();
+//        if(subscription != null) {
+//            if(system.isHasExportedApplicationData() ||
+//                    system.getTransactionDate().getTime() - subscription.getApplicationTime().getTime() >= 1000 * 60 * 60 * 24)
+//                return false;
+//            Bankcard bankcard = accountClient.getBankcard(subscription.getTradingAccountId());
+//            bankcard.setBalance(bankcard.getBalance() + subscription.getSubscriptionAmount());
+//            accountClient.updateBalance(bankcard);
+//            return subscriptionMapper.insert(new Subscription(null,transactionId,subscription.getProductId()
+//                    ,system.getTransactionDate(),true, subscription.getSubscriptionAmount())) > 0;
+//        }else {
+//            Redemption redemption = redemptionMapper.selectById(transactionId);
+//            if(system.isHasExportedApplicationData() ||
+//                    system.getTransactionDate().getTime() - redemption.getApplicationTime().getTime() >= 1000 * 60 * 60 * 24)
+//                return false;
+//            Holding holding = getHolding(redemption.getTradingAccountId(), redemption.getProductId());
+//            holding.setShares(holding.getShares() + redemption.getRedemptionShares());
+//            holdingMapper.updateById(holding);
+//            return redemptionMapper.insert(new Redemption(null, redemption.getRedemptionShares(),transactionId
+//                    ,redemption.getProductId(),system.getTransactionDate(),true)) > 0;
+//        }
         Subscription subscription = subscriptionMapper.selectById(transactionId);
         OurSystem system = settleClient.getSystem();
         if(subscription != null) {
@@ -91,8 +114,9 @@ public class TransactionServiceImpl implements TransactionService {
             Bankcard bankcard = accountClient.getBankcard(subscription.getTradingAccountId());
             bankcard.setBalance(bankcard.getBalance() + subscription.getSubscriptionAmount());
             accountClient.updateBalance(bankcard);
-            return subscriptionMapper.insert(new Subscription(null,transactionId,subscription.getProductId()
-                    ,system.getTransactionDate(),true, subscription.getSubscriptionAmount())) > 0;
+            UpdateWrapper<Subscription> wrapper = new UpdateWrapper<>();
+            wrapper.eq("transaction_id", transactionId).set("is_cancel", true);
+            return subscriptionMapper.update(null, wrapper) > 0;
         }else {
             Redemption redemption = redemptionMapper.selectById(transactionId);
             if(system.isHasExportedApplicationData() ||
@@ -101,8 +125,9 @@ public class TransactionServiceImpl implements TransactionService {
             Holding holding = getHolding(redemption.getTradingAccountId(), redemption.getProductId());
             holding.setShares(holding.getShares() + redemption.getRedemptionShares());
             holdingMapper.updateById(holding);
-            return redemptionMapper.insert(new Redemption(null, redemption.getRedemptionShares(),transactionId
-                    ,redemption.getProductId(),system.getTransactionDate(),true)) > 0;
+            UpdateWrapper<Redemption> wrapper = new UpdateWrapper<>();
+            wrapper.eq("transaction_id", transactionId).set("is_cancel", true);
+            return redemptionMapper.update(null, wrapper) > 0;
         }
     }
 }

@@ -3,12 +3,12 @@ import { createRouter, createWebHistory, type RouteRecordRaw } from 'vue-router'
 import LoginVue from '@/views/Login.vue'
 import ResetPwVue from '@/views/Resetpw.vue'
 import CreateAccountVue from '@/views/CreateAccount.vue';
-import UserInfoVue from '@/views/Layout/UserInfo.vue';
+import UserInfoVue from '@/views/layout/UserInfo.vue';
 import LayoutVue from '@/views/Layout.vue';
-import ProductVue from '@/views/Layout/Product.vue';
-import SubscriptionVue from '@/views/Layout/Subscription.vue';
-import RedemptionVue from '@/views/Layout/Redemption.vue';
-import IncomeVue from '@/views/Layout/Income.vue';
+import ProductVue from '@/views/layout/Product.vue';
+import SubscriptionVue from '@/views/layout/Subscription.vue';
+import RedemptionVue from '@/views/layout/Redemption.vue';
+import IncomeVue from '@/views/layout/Income.vue';
 
 //定义路由关系
 const routes:RouteRecordRaw[] = [

@@ -2,13 +2,17 @@
 import { createRouter, createWebHistory, type RouteRecordRaw } from 'vue-router'
 import LoginVue from '@/views/Login.vue'
 import ResetPwVue from '@/views/Resetpw.vue'
-import UserInfoVue from '@/views/UserInfo.vue';
+import UserInfoVue from '@/views/layout/UserInfo.vue';
+import LayoutVue from '@/views/Layout.vue';
+import ProductVue from '@/views/layout/Product.vue';
 //定义路由关系
 const routes:RouteRecordRaw[] = [
-    { path: '/', redirect: '/login' },
     { path: '/login', component: LoginVue },
     { path: '/resetpw', component: ResetPwVue },
-    { path: '/info', component: UserInfoVue }
+    { path: '/', component: LayoutVue, redirect:'/info',children:[
+        { path: '/info', component: UserInfoVue },
+        { path: '/product', component: ProductVue },
+    ]}
 ]
 //创建路由器
 const router = createRouter({

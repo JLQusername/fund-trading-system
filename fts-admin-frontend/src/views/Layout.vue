@@ -1,11 +1,23 @@
 <script setup>
 import { ref } from 'vue'
 import { ElContainer, ElAside, ElMenu, ElMenuItem, ElHeader, ElMain, ElFooter } from 'element-plus';
+import { useTokenStore } from '@/stores/token';
 import { useUserInfoStore } from '@/stores/userInfo';
-import router from '@/router';
+import { useRouter } from 'vue-router';
+
+const tokenStore = useTokenStore();
 const userInfoStore = useUserInfoStore();
 const userInfo = userInfoStore.info;
+const router = useRouter();
+if (!userInfoStore.info.adminAccount) {
+  router.push('/login');
+}
 const form = ref({ ...userInfo });
+const logout = () => {
+  tokenStore.removeToken();
+  userInfoStore.removeInfo();
+  router.push('/login');
+};
 </script>
 
 <template>
@@ -13,30 +25,30 @@ const form = ref({ ...userInfo });
     <!-- 左侧菜单 -->
     <el-aside width="250px">
       <el-menu active-text-color="#F3F3E0" background-color="#2E5077" text-color="#fff" router>
-        <div class="menu-title">⭐系统服务选项⭐</div>
+        <div class="menu-title">管理员系统</div>
         <el-menu-item index="/info">
-          <span>账号信息</span>
+          <span>客户信息</span>
         </el-menu-item>
         <el-menu-item index="/product">
           <span>产品列表</span>
-        </el-menu-item>
-        <el-menu-item index="/income">
-          <span>当前收入</span>
         </el-menu-item>
       </el-menu>
     </el-aside>
     <!-- 右侧主区域 -->
     <el-container>
       <!-- 头部区域 -->
-      <el-header>
-        <div>欢迎 {{ form.name }} 进入系统 基金帐号：{{ form.fundAccount }}</div>
+      <el-header >
+        <div>
+          管理员帐号：{{ form.adminAccount }}
+          <el-button type="danger" @click="logout">退出登录</el-button>
+        </div>
       </el-header>
       <!-- 中间区域 -->
       <el-main>
         <router-view />
       </el-main>
        <!-- 底部区域 -->
-       <el-footer>同济基金交易系统</el-footer>
+       <el-footer>同济基金交易 管理员系统</el-footer>
     </el-container>
   </el-container>
 </template>

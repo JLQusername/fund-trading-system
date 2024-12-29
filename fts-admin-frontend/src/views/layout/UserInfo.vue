@@ -2,7 +2,7 @@
 import { ref } from 'vue';
 import { ElMessage, ElForm, ElFormItem, ElInput, ElButton, ElCard, ElTable, ElTableColumn, ElPagination } from 'element-plus';
 import { getCustomersByPageService, getCustomerTotalService, getBankcardsService } from '@/api/account';
-import { BankcardVO,CustomerInfo } from '@/types/account';
+import type { BankcardVO,CustomerInfo } from '@/types/account';
 
 // 定义响应式的数据
 const form = ref({
@@ -58,10 +58,10 @@ getCustomerTotal();
 </script>
 
 <template>
-  <el-card style="width: 80%;">
+  <el-card style="width: 99.9%; height: 99.8%;">
     <el-form :inline="true" style="margin-bottom: 20px; display: flex; justify-content: flex-end;">
        <el-form-item label="搜索关键字" style="margin-right: 10px;width: 400px;">
-        <el-input v-model="form.key" placeholder="请输入客户姓名" @input="handleSearch"></el-input>
+        <el-input v-model="form.key" placeholder="请输入客户姓名"></el-input>
       </el-form-item>
       <el-form-item>
         <el-button type="primary" @click="handleSearch">搜索</el-button>
@@ -78,7 +78,7 @@ getCustomerTotal();
         </template>
       </el-table-column>
     </el-table>
-    <el-dialog title="客户银行卡" width="50%" v-model="dialogVisible"@close="dialogVisible = false">
+    <el-dialog title="客户银行卡" width="50%" v-model="dialogVisible" @close="dialogVisible = false">
       <el-table :data="bankcards">
         <el-table-column prop="tradingAccount" label="交易账号" align="center"></el-table-column>
         <el-table-column prop="bankcardNumber" label="银行卡号" align="center"></el-table-column>

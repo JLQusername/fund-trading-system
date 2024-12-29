@@ -13,8 +13,13 @@ const tokenStore = useTokenStore();
 const userInfoStore = useUserInfoStore();
 const userInfo = userInfoStore.info;
 const tradingAccounts: Ref<BankcardVO[]> = ref([]);
+  const router = useRouter();
 
 const getBankcards = async () => {
+  if(userInfo.fundAccount === ''){
+    router.push('/login');
+    return ElMessage.warning('请先登录');
+  }
   const res = await getBankcardsService(userInfo.fundAccount);
   tradingAccounts.value = res.data;
 }
@@ -27,8 +32,6 @@ const isTestLevel = ref(false);
 const form = ref({ ...userInfo });
 const bankcardNumber = ref('');
 const code = ref('');
-
-const router = useRouter();
 
 const handleLevelChange = (level: number) => {
   form.value.riskLevel = level;
