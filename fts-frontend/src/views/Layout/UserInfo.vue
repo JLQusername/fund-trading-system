@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { ref, computed, type Ref} from 'vue';
-import { ElForm, ElFormItem, ElInput, ElButton, ElMessage } from 'element-plus';
+import { ElForm, ElFormItem, ElInput, ElButton, ElMessage, ElMessageBox } from 'element-plus';
 import RiskAssessment from '@/components/RiskAssessment.vue';
 import { addBankcardService,UpdateInfoService,getBankcardsService,deleteBankcardService } from '@/api/account';
 import { useUserInfoStore } from '@/stores/userInfo';
@@ -102,11 +102,23 @@ const addBankcard = async () => {
 }
 
 const riskLevelDescription = computed(() => Level(form.value.riskLevel));
+
+const logout = () => {
+  ElMessageBox.confirm('是否确认退出登录？', '提示', {
+    confirmButtonText: '确定',
+    cancelButtonText: '取消',
+    type: 'warning',
+  }).then(() => {
+    tokenStore.removeToken();
+    userInfoStore.removeInfo();
+    router.push('/login');
+  })
+}
 </script>
 
 <template>
   <div class="personal-info-container">
-    <h1 style="padding: 50px; text-align: center; color: #0b407ce0;">同济基金交易系统 个人信息界面</h1>
+    <h3 style="padding: 30px; text-align: center; color: #0b407ce0;">同济基金交易系统 个人信息界面</h3>
     <el-form :model="form" label-width="120px" class="form-container">
       <!-- 姓名 -->
       <el-form-item label="姓名">
@@ -134,6 +146,7 @@ const riskLevelDescription = computed(() => Level(form.value.riskLevel));
       <!-- 修改按钮 -->
       <el-form-item>
         <el-button v-if="!isEditing" type="primary" @click="isEditing = true;">修改</el-button>
+        <el-button v-if="!isEditing" type="danger" @click="logout">退出登录</el-button>
         <el-button v-if="isEditing" type="danger" @click="isTestLevel = !isTestLevel">{{isTestLevel ? "取消" : "风险评估"}}</el-button>
       </el-form-item>
       <el-form-item v-if="isTestLevel">
@@ -147,7 +160,7 @@ const riskLevelDescription = computed(() => Level(form.value.riskLevel));
     <!-- 基金账户和银行卡号的表格展示 -->
     <div style="margin-left: 130px;">
       <h3 style="padding: 10px; color: #0b407ce0; ">基金账户</h3>
-      <el-table :data="tradingAccounts" style="width:36%; margin-top: 20px;">
+      <el-table :data="tradingAccounts" style="width:46%; margin-top: 20px;">
         <el-table-column label="基金账户" prop="tradingAccount" width="200" align="center"></el-table-column>
         <el-table-column label="银行卡号" prop="bankcardNumber" width="200" align="center"></el-table-column>
         <el-table-column label="操作" width="150" align="center">
@@ -173,7 +186,7 @@ const riskLevelDescription = computed(() => Level(form.value.riskLevel));
 .personal-info-container {
   padding: 2px;
   background-color: #cad1d82e;
-  min-height: 100vh;
+  min-height: 86.4vh;
 }
 
 .form-container {
