@@ -33,18 +33,19 @@ public class TransactionServiceImpl implements TransactionService {
     private final SettleClient settleClient;
 
     @Override
-    public int submitSubscription(SubscriptionDTO subscriptionDTO) {
-        if(productClient.getLevel(subscriptionDTO.getProductId()) > subscriptionDTO.getRiskLevel())
-            return 0; // 风险等级不够
-        Bankcard bankcard = accountClient.getBankcard(subscriptionDTO.getTradingAccountId());
+    public long submitSubscription(SubscriptionDTO subscriptionDTO) {
+//        if(productClient.getLevel(subscriptionDTO.getProductId()) > subscriptionDTO.getRiskLevel())
+//            return 0; // 风险等级不够
+        Bankcard bankcard = accountClient.getBankcard(Long.parseLong(subscriptionDTO.getTradingAccountId()));
         if(bankcard.getBalance() < subscriptionDTO.getAmount())
-            return 1; // 余额不足
+            return 1L; // 余额不足
         Date date = getDate();
         bankcard.setBalance(bankcard.getBalance() - subscriptionDTO.getAmount());
-        subscriptionMapper.insert(new Subscription(null, subscriptionDTO.getTradingAccountId(),
-                subscriptionDTO.getProductId(), date,false,subscriptionDTO.getAmount()));
+        Subscription subscription = new Subscription(null, Long.parseLong(subscriptionDTO.getTradingAccountId()),
+                subscriptionDTO.getProductId(), date,false,subscriptionDTO.getAmount());
+        subscriptionMapper.insert(subscription);
         accountClient.updateBalance(bankcard);
-        return 2;
+        return subscription.getTransactionId();
     }
 
     private Date getDate() {
@@ -70,15 +71,17 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     @Override
-    public boolean submitRedemption(RedemptionDTO redemptionDTO) {
-        Holding holding = getHolding(redemptionDTO.getTradingAccountId(), redemptionDTO.getProductId());
+    public long submitRedemption(RedemptionDTO redemptionDTO) {
+        Holding holding = getHolding(Long.parseLong(redemptionDTO.getTradingAccountId()), redemptionDTO.getProductId());
         if(holding == null || holding.getShares() < redemptionDTO.getShares())
-            return false; //份额不足
+            return 1L; //份额不足
         Date date = getDate();
-        redemptionMapper.insert(new Redemption(null,redemptionDTO.getShares(),
-                redemptionDTO.getTradingAccountId(),redemptionDTO.getProductId(),date,false));
+        Redemption redemption = new Redemption(null,redemptionDTO.getShares(),
+                Long.parseLong(redemptionDTO.getTradingAccountId()),redemptionDTO.getProductId(),date,false);
+        redemptionMapper.insert(redemption);
         holding.setShares(holding.getShares() - redemptionDTO.getShares());
-        return holdingMapper.updateById(holding) > 0;
+        holdingMapper.updateById(holding);
+        return redemption.getTransactionId();
     }
 
     @Override

@@ -19,3 +19,7 @@ export function getBankcardsService(fundAccount: string) {
 export function deleteBankcardService(tradingAccountId: string) {
     return request.get('/account//delete_bankcard', { params: { tradingAccountId } });
 }
+
+export function getTradingAccountsService(fundAccount: string) {
+    return request.get('/account/trading_accounts', { params: { fundAccount } });
+}

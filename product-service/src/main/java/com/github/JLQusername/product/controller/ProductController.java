@@ -18,4 +18,9 @@ public class ProductController {
     public int getLevel(Integer productId) {
         return productService.getById(productId).getRiskLevel();
     }
+
+    @GetMapping
+    public String getProduct() {
+        return "product";
+    }
 }

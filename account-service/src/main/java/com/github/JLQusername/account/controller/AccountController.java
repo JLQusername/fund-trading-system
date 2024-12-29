@@ -71,6 +71,11 @@ public class AccountController {
         return tradingAccountService.getBankcardByTradingAccountId(Long.parseLong(tradingAccountId));
     }
 
+    @GetMapping("/balance")
+    public double getBalance(@RequestParam String bankcardNumber){
+        return tradingAccountService.getBalance(bankcardNumber);
+    }
+
     @PatchMapping("/balance")
     public boolean updateBalance(@RequestBody Bankcard bankcard){
         return tradingAccountService.updateBalance(bankcard);
@@ -84,5 +89,10 @@ public class AccountController {
     @GetMapping("/total")
     public Result getTotal(){
         return Result.success(customerService.count());
+    }
+
+    @GetMapping("/trading_accounts")
+    public Result getTradingAccounts(@RequestParam String fundAccount){
+        return Result.success(tradingAccountService.getTradingAccounts(Long.parseLong(fundAccount)));
     }
 }

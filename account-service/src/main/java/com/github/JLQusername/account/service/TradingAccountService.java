@@ -16,4 +16,8 @@ public interface TradingAccountService {
     Bankcard getBankcardByTradingAccountId(long tradingAccountId);
 
     boolean updateBalance(Bankcard bankcard);
+
+    double getBalance(String bankcardNumber);
+
+    List<String> getTradingAccounts(Long fundAccount);
 }

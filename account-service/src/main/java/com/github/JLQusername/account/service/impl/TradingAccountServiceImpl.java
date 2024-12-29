@@ -77,4 +77,18 @@ public class TradingAccountServiceImpl implements TradingAccountService {
     public boolean updateBalance(Bankcard bankcard) {
         return bankcardMapper.updateById(bankcard) > 0;
     }
+
+    @Override
+    public double getBalance(String bankcardNumber) {
+        return bankcardMapper.selectOne(new QueryWrapper<Bankcard>().eq("bankcard_number", bankcardNumber)).getBalance();
+    }
+
+    @Override
+    public List<String> getTradingAccounts(Long fundAccount) {
+        QueryWrapper<TradingAccount> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("fund_account", fundAccount).eq("is_deleted", false);
+        return tradingAccountMapper.selectList(queryWrapper).stream()
+                .map(tradingAccount -> tradingAccount.getTradingAccountId().toString())
+                .collect(Collectors.toList());
+    }
 }

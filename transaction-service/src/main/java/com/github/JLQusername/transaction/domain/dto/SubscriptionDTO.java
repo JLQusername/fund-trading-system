@@ -4,8 +4,7 @@ import lombok.Data;
 
 @Data
 public class SubscriptionDTO {
-    private long tradingAccountId;
+    private String tradingAccountId;
     private int productId;
-    private int riskLevel;
     private double amount;
 }

@@ -23,6 +23,9 @@ const form = ref({ ...userInfo });
         <el-menu-item index="/income">
           <span>当前收入</span>
         </el-menu-item>
+        <el-menu-item index="/transactions">
+          <span>交易记录</span>
+        </el-menu-item>
       </el-menu>
     </el-aside>
     <!-- 右侧主区域 -->

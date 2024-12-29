@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { ref, computed, type Ref} from 'vue';
+import { ref, computed} from 'vue';
 import { ElForm, ElFormItem, ElInput, ElButton, ElMessage, ElMessageBox } from 'element-plus';
 import RiskAssessment from '@/components/RiskAssessment.vue';
 import { addBankcardService,UpdateInfoService,getBankcardsService,deleteBankcardService } from '@/api/account';
@@ -12,7 +12,7 @@ import { useTokenStore } from '@/stores/token';
 const tokenStore = useTokenStore();
 const userInfoStore = useUserInfoStore();
 const userInfo = userInfoStore.info;
-const tradingAccounts: Ref<BankcardVO[]> = ref([]);
+const tradingAccounts = ref<BankcardVO[]>([]);
   const router = useRouter();
 
 const getBankcards = async () => {
