@@ -12,8 +12,8 @@ public class Subscription extends Transaction{
     private double subscriptionAmount;
 
     public Subscription(Long transactionId, long tradingAccountId, int productId,
-                        Date transactionTime, boolean isCancel, double subscriptionAmount) {
-        super(transactionId, tradingAccountId, productId, transactionTime, isCancel);
+                        Date transactionTime, boolean isCancel, double subscriptionAmount, long fundAccount) {
+        super(transactionId, tradingAccountId,fundAccount, productId, transactionTime, isCancel);
         this.subscriptionAmount = subscriptionAmount;
     }
 }
