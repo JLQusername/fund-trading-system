@@ -40,6 +40,7 @@ const submitRedemption = async () => {
     productId: form.value.productId,
     tradingAccountId: form.value.tradingAccountId,
     shares: form.value.shares,
+    fundAccount: userInfo.fundAccount
   };
   try{
     const res = await submitRedemptionService(data);

@@ -5,6 +5,7 @@ import lombok.Data;
 @Data
 public class RedemptionDTO {
     private String tradingAccountId;
+    private long fundAccount;
     private int productId;
     private double shares;
 }

@@ -13,6 +13,7 @@ public abstract class Transaction {
     @TableId(type = IdType.ASSIGN_ID)
     private Long transactionId;
     private long tradingAccountId;
+    private long fundAccount;
     private int productId;
     private Date applicationTime;
     private boolean isCancel;

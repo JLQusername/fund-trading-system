@@ -42,7 +42,7 @@ public class TransactionServiceImpl implements TransactionService {
         Date date = getDate();
         bankcard.setBalance(bankcard.getBalance() - subscriptionDTO.getAmount());
         Subscription subscription = new Subscription(null, Long.parseLong(subscriptionDTO.getTradingAccountId()),
-                subscriptionDTO.getProductId(), date,false,subscriptionDTO.getAmount());
+                subscriptionDTO.getProductId(), date,false,subscriptionDTO.getAmount(),subscriptionDTO.getFundAccount());
         subscriptionMapper.insert(subscription);
         accountClient.updateBalance(bankcard);
         return subscription.getTransactionId();
@@ -77,7 +77,7 @@ public class TransactionServiceImpl implements TransactionService {
             return 1L; //份额不足
         Date date = getDate();
         Redemption redemption = new Redemption(null,redemptionDTO.getShares(),
-                Long.parseLong(redemptionDTO.getTradingAccountId()),redemptionDTO.getProductId(),date,false);
+                Long.parseLong(redemptionDTO.getTradingAccountId()),redemptionDTO.getProductId(),date,false,redemptionDTO.getFundAccount());
         redemptionMapper.insert(redemption);
         holding.setShares(holding.getShares() - redemptionDTO.getShares());
         holdingMapper.updateById(holding);

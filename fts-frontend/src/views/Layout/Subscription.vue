@@ -40,6 +40,7 @@ const submitSubscription = async () => {
     productId: form.value.productId,
     tradingAccountId: form.value.tradingAccountId,
     amount: form.value.subscriptionAmount,
+    fundAccount: userInfo.fundAccount
   };
   try{
     const res = await submitSubscriptionService(data);
