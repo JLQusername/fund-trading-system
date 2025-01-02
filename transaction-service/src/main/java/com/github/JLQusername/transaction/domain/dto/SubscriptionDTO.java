@@ -7,5 +7,6 @@ public class SubscriptionDTO {
     private String tradingAccountId;
     private long fundAccount;
     private int productId;
+    private String productName;
     private double amount;
 }

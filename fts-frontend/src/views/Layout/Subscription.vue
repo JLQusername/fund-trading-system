@@ -37,6 +37,7 @@ const submitSubscription = async () => {
     return ElMessage.warning('请输入正确的金额');
   }
   const data: SubscriptionDTO = {
+    productName: form.value.productName,
     productId: form.value.productId,
     tradingAccountId: form.value.tradingAccountId,
     amount: form.value.subscriptionAmount,

@@ -75,7 +75,9 @@ public class TradingAccountServiceImpl implements TradingAccountService {
 
     @Override
     public boolean updateBalance(Bankcard bankcard) {
-        return bankcardMapper.updateById(bankcard) > 0;
+        UpdateWrapper<Bankcard> wrapper = new UpdateWrapper<>();
+        wrapper.eq("bankcard_number", bankcard.getBankcardNumber()).set("balance", bankcard.getBalance());
+        return bankcardMapper.update(null,wrapper) > 0;
     }
 
     @Override

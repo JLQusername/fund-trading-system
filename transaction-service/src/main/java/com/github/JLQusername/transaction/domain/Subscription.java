@@ -11,9 +11,9 @@ import java.util.Date;
 public class Subscription extends Transaction{
     private double subscriptionAmount;
 
-    public Subscription(Long transactionId, long tradingAccountId, int productId,
-                        Date transactionTime, boolean isCancel, double subscriptionAmount, long fundAccount) {
-        super(transactionId, tradingAccountId,fundAccount, productId, transactionTime, isCancel);
+    public Subscription(Long transactionId, double subscriptionAmount,long tradingAccountId,long fundAccount,
+                        int productId, String productName, Date applicationTime, boolean isCancel) {
+        super(transactionId, tradingAccountId, fundAccount, productId, productName, applicationTime, isCancel);
         this.subscriptionAmount = subscriptionAmount;
     }
 }

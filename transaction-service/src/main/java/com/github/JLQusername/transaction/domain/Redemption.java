@@ -11,8 +11,8 @@ public class Redemption extends Transaction{
     private double redemptionShares;
 
     public Redemption(Long transactionId, double redemptionShares,long tradingAccountId,
-                      int productId,Date transactionTime, boolean isCancel, long fundAccount) {
-        super(transactionId, tradingAccountId, fundAccount, productId, transactionTime, isCancel);
+                      int productId,Date transactionTime, boolean isCancel, long fundAccount, String productName) {
+        super(transactionId, tradingAccountId, fundAccount,productId,productName, transactionTime, isCancel);
         this.redemptionShares = redemptionShares;
     }
 }

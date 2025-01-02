@@ -9,3 +9,7 @@ export function submitSubscriptionService(data: SubscriptionDTO) {
 export function submitRedemptionService(data: RedemptionDTO) {
     return request.post('/transaction/redemption', data);
 }
+
+export function cancelService(transactionId: string){
+    return request.post('/transaction/cancel', { param: {transactionId} });
+}

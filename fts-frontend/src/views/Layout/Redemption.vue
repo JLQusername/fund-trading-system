@@ -37,6 +37,7 @@ const submitRedemption = async () => {
     return ElMessage.warning('请输入正确的份额');
   }
   const data: RedemptionDTO = {
+    productName: form.value.productName,
     productId: form.value.productId,
     tradingAccountId: form.value.tradingAccountId,
     shares: form.value.shares,

@@ -12,9 +12,10 @@ import java.util.Date;
 public abstract class Transaction {
     @TableId(type = IdType.ASSIGN_ID)
     private Long transactionId;
-    private long tradingAccountId;
-    private long fundAccount;
+    private Long tradingAccountId;
+    private Long fundAccount;
     private int productId;
+    private String productName;
     private Date applicationTime;
     private boolean isCancel;
 

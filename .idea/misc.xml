@@ -35,6 +35,7 @@
     <option name="ignoredFiles">
       <set>
         <option value="$PROJECT_DIR$/login-service/pom.xml" />
+        <option value="$PROJECT_DIR$/query-service/pom.xml" />
       </set>
     </option>
   </component>
