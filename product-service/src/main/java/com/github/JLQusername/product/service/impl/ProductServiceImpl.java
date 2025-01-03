@@ -2,9 +2,12 @@ package com.github.JLQusername.product.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.github.JLQusername.api.OurSystem;
+import com.github.JLQusername.api.client.SettleClient;
 import com.github.JLQusername.product.domain.Product;
 import com.github.JLQusername.product.mapper.ProductMapper;
 import com.github.JLQusername.product.service.ProductService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -14,6 +17,9 @@ import java.util.List;
 
 @Service
 public class ProductServiceImpl extends ServiceImpl<ProductMapper, Product> implements ProductService {
+
+    @Autowired
+    private SettleClient settleClient;
 
     @Override
     public List<Product> list() {
@@ -42,4 +48,9 @@ public class ProductServiceImpl extends ServiceImpl<ProductMapper, Product> impl
     public void updateProduct(Product product) {
         baseMapper.updateById(product);
     }
+
+
+
+
+
 }

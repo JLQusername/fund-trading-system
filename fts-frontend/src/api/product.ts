@@ -14,3 +14,6 @@ export function fetchNetValue(productId: number, date: string) {
     return request.get(`/product/netvalue/${productId}/${date}`);
 }
 
+export function fetchTransactionDate() {
+    return request.get('/product/system/transaction-date');
+}

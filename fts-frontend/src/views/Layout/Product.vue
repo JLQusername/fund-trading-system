@@ -55,7 +55,7 @@
 <script lang="ts">
 import { defineComponent, ref, computed, onMounted } from 'vue';
 import { ElMessage } from 'element-plus';
-import { fetchProducts, searchProducts,fetchNetValue } from '@/api/product';
+import { fetchProducts, searchProducts,fetchNetValue,fetchTransactionDate } from '@/api/product';
 import type { Product } from '@/types/product';
 
 export default defineComponent({
@@ -71,6 +71,7 @@ export default defineComponent({
     const selectedProduct = ref<Product | null>(null);
 
     const selectedProductNetValue = ref<number | null>(null); // 新增的净值信息
+    const transactionDate = ref<string | null>(null); // 新增：存储交易日期
 
     // 更新 paginatedProducts 的计算属性
     const paginatedProducts = computed(() => {
@@ -133,9 +134,20 @@ export default defineComponent({
       loadProducts();
     };
 
+    const getTransactionDate = async () => {
+      try {
+        const res = await fetchTransactionDate();
+        transactionDate.value = res.data as string;
+      } catch (error) {
+        ElMessage.error('获取交易日期失败');
+        transactionDate.value = null;
+      }
+    };
+
     onMounted(() => {
       loadProducts();
       appliedSearchKeyword.value = ''; // 确保初始状态下没有应用的搜索关键词
+      getTransactionDate(); // 页面加载时获取交易日期
     });
 
     return {
@@ -153,7 +165,7 @@ export default defineComponent({
       clearSelectedProduct,
       handlePageChange,
       selectedProductNetValue,
-
+      transactionDate, // 返回给模板
     };
   },
 });
