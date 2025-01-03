@@ -80,37 +80,6 @@ public class ProductController {
     }
 
 
-    @GetMapping("/system/transaction-date")
-    public Result getTransactionDate() {
-        try {
-            // 获取 OurSystem 对象
-            OurSystem ourSystem = settleClient.getSystem();
-
-            // 如果 getTransactionDate 返回的是一个 ISO 8601 字符串，请直接使用 OffsetDateTime.parse()
-            // 如果是 java.util.Date.toString() 格式的字符串，则按如下方式解析
-            String rawDateStr = ourSystem.getTransactionDate().toString();
-
-            // 定义输入日期格式
-            DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern("EEE MMM dd HH:mm:ss zzz yyyy", Locale.US);
-
-            // 解析输入字符串为 ZonedDateTime 对象
-            ZonedDateTime dateTime = ZonedDateTime.parse(rawDateStr, inputFormatter);
-
-            // 定义输出格式：只有日期部分
-            DateTimeFormatter outputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-
-            // 将日期格式化为字符串并返回
-            String formattedDate = dateTime.format(outputFormatter);
-
-            return Result.success(formattedDate);
-        } catch (DateTimeParseException e) {
-            return Result.error("Failed to parse date: " + e.getMessage());
-        } catch (Exception e) {
-            return Result.error("An error occurred while fetching the transaction date: " + e.getMessage());
-        }
-
-    }
-
     @PostMapping("/net_values")
     public List<NetValue> getLatestNetValues() {
         return productService.getLatestNetValues();
