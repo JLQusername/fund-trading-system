@@ -13,11 +13,12 @@ import java.util.Date;
 
 @FeignClient("product-service")
 public interface ProductClient {
-    @PostMapping("product/level")
-    int getLevel(@RequestParam Integer productId);
+//    @PostMapping("product/level")
+//    int getLevel(@RequestParam Integer productId);
 
     @GetMapping("product/net_values")
     List<NetValue> getLatestNetValues();
+
     @PostMapping("product/net_value/insert")
     boolean insertNetValue(@RequestBody NetValue netValue);
     

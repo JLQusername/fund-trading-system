@@ -12,6 +12,6 @@ public interface AccountClient {
     @PatchMapping("/account/balance")
     boolean updateBalance(@RequestBody Bankcard bankcard);
 
-    @GetMapping("/account/balance")
-    double getBalance(@RequestParam String bankcardNumber);
+//    @GetMapping("/account/balance")
+//    double getBalance(@RequestParam String bankcardNumber);
 }

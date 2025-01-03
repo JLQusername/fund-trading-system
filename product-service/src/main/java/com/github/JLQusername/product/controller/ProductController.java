@@ -32,11 +32,6 @@ public class ProductController {
         return productService.getById(productId).getRiskLevel();
     }
 
-    @GetMapping
-    public String getProduct() {
-        return "product";
-    }
-
     /*获取所有产品列表*/
     @GetMapping("/list")
     public Result getAllProducts() {

@@ -40,7 +40,7 @@
         <dl class="product-info">
           <dt>产品名称：</dt><dd>{{ selectedProduct.productName }}</dd>
           <dt>产品类型：</dt><dd>{{ selectedProduct.productType || '未指定' }}</dd>
-          <dt>风险等级：</dt><dd>{{ selectedProduct.riskLevel !== undefined ? selectedProduct.riskLevel : '无信息' }}</dd>
+          <dt>风险等级：</dt><dd>{{ selectedProduct.riskLevel !== undefined ? Level(selectedProduct.riskLevel) : '无信息' }}</dd>
           <dt>产品状态：</dt><dd>{{ selectedProduct.productStatus || '未指定' }}</dd>
           <dt>净值：</dt><dd>{{ selectedProductNetValue !== null ? selectedProductNetValue : '无信息' }}</dd>
         </dl>
@@ -144,6 +144,21 @@ export default defineComponent({
       }
     };
 
+  const Level = (level : number) => {
+    switch (level) {
+      case 0:
+        return '低风险型';
+      case 1:
+        return '中低风险型';
+      case 2:
+        return '中风险型';
+      case 3:
+        return '中高风险型';
+      default:
+        return '高风险型';
+    }
+  }
+
     onMounted(() => {
       loadProducts();
       appliedSearchKeyword.value = ''; // 确保初始状态下没有应用的搜索关键词
@@ -164,6 +179,7 @@ export default defineComponent({
       showProductDetails,
       clearSelectedProduct,
       handlePageChange,
+      Level,
       selectedProductNetValue,
       transactionDate, // 返回给模板
     };

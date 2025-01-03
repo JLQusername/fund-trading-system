@@ -81,10 +81,10 @@ public class AccountController {
         return tradingAccountService.updateBalance(bankcard);
     }
 
-    @PostMapping("/create_admin")
-    public boolean createAdmin(@RequestBody Admin user){
-        return adminService.createAdmin(user);
-    }
+//    @PostMapping("/create_admin")
+//    public boolean createAdmin(@RequestBody Admin user){
+//        return adminService.createAdmin(user);
+//    }
 
     @GetMapping("/total")
     public Result getTotal(){

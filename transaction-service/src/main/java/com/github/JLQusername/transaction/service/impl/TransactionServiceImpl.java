@@ -57,8 +57,9 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     private Date getDate() {
-        Date date = settleClient.getSystem().getTransactionDate();
-        if(settleClient.getSystem().isHasStoppedApplication()){
+        OurSystem ourSystem = settleClient.getSystem();
+        Date date = ourSystem.getTransactionDate();
+        if(ourSystem.isHasStoppedApplication()){
             // 判断date是周几
             Calendar calendar = Calendar.getInstance();
             calendar.setTime(date);
