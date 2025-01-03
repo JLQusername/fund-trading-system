@@ -4,6 +4,8 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.github.JLQusername.api.Bankcard;
 import com.github.JLQusername.api.OurSystem;
+import com.github.JLQusername.api.bo.RedemptionBO;
+import com.github.JLQusername.api.bo.SubscriptionBO;
 import com.github.JLQusername.api.client.AccountClient;
 import com.github.JLQusername.api.client.ProductClient;
 import com.github.JLQusername.api.client.SettleClient;
@@ -18,9 +20,14 @@ import com.github.JLQusername.transaction.mapper.SubscriptionMapper;
 import com.github.JLQusername.transaction.service.TransactionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -78,8 +85,8 @@ public class TransactionServiceImpl implements TransactionService {
             return 1L; //份额不足
         Date date = getDate();
         Redemption redemption = new Redemption(null,redemptionDTO.getShares(),
-                Long.parseLong(redemptionDTO.getTradingAccountId()),redemptionDTO.getProductId(),date,
-                false,redemptionDTO.getFundAccount(), redemptionDTO.getProductName());
+                Long.parseLong(redemptionDTO.getTradingAccountId()),redemptionDTO.getFundAccount(),redemptionDTO.getProductId(),
+                redemptionDTO.getProductName(),date, false);
         redemptionMapper.insert(redemption);
         holding.setShares(holding.getShares() - redemptionDTO.getShares());
         holdingMapper.updateById(holding);
@@ -134,5 +141,81 @@ public class TransactionServiceImpl implements TransactionService {
             wrapper.eq("transaction_id", transactionId).set("is_cancel", true);
             return redemptionMapper.update(null, wrapper) > 0;
         }
+    }
+
+    @Override
+    public List<SubscriptionBO> getValidSubscriptionBOs(Date date) {
+        QueryWrapper<Subscription> queryWrapper = new QueryWrapper<>();
+        queryWrapper.apply("DATE(application_time) = DATE({0})", date)
+                .eq("is_cancel", false);
+        return subscriptionMapper.selectList(queryWrapper)
+                               .stream()
+                               .map(s -> {
+                                   SubscriptionBO bo = new SubscriptionBO();
+                                   bo.setTransactionId(s.getTransactionId());
+                                   bo.setProductId(s.getProductId());
+                                   bo.setAmount(s.getSubscriptionAmount());
+                                   return bo;
+                               })
+                               .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<RedemptionBO> getValidRedemptionBOs(Date date) {
+        QueryWrapper<Redemption> queryWrapper = new QueryWrapper<>();
+        queryWrapper.apply("DATE(application_time) = DATE({0})", date)
+                .eq("is_cancel", false);
+        return redemptionMapper.selectList(queryWrapper)
+                             .stream()
+                             .map(r -> {
+                                 RedemptionBO bo = new RedemptionBO();
+                                 bo.setTransactionId(r.getTransactionId());
+                                 bo.setProductId(r.getProductId());
+                                 bo.setRedemptionShares(r.getRedemptionShares());
+                                 return bo;
+                             })
+                             .collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional
+    public boolean confirmSubscriptionBatch(Map<Long, Double> transactionIdToShares) {
+        for (Map.Entry<Long, Double> entry : transactionIdToShares.entrySet()) {
+            // 根据 transactionId 获取 subscription 信息
+            Subscription subscription = subscriptionMapper.selectById(entry.getKey());
+            if (subscription == null) continue;
+
+            // 根据 trading_account 和 product_id 获取或创建 holding
+            Holding holding = getHolding(subscription.getTradingAccountId(), subscription.getProductId());
+            if (holding == null) {
+                holding = new Holding();
+                holding.setTradingAccountId(subscription.getTradingAccountId());
+                holding.setProductId(subscription.getProductId());
+                holding.setShares(entry.getValue());
+                holdingMapper.insert(holding);
+            } else {
+                holding.setShares(holding.getShares() + entry.getValue());
+                holdingMapper.updateById(holding);
+            }
+        }
+        return true;
+    }
+
+    @Override
+    @Transactional
+    public boolean confirmRedemptionBatch(Map<Long, Double> transactionIdToAmount) {
+        for (Map.Entry<Long, Double> entry : transactionIdToAmount.entrySet()) {
+            // 根据 transactionId 获取 redemption 信息
+            Redemption redemption = redemptionMapper.selectById(entry.getKey());
+            if (redemption == null) continue;
+
+            // 根据 trading_account 获取 bankcard 并更新余额
+            Bankcard bankcard = accountClient.getBankcard(redemption.getTradingAccountId());
+            if (bankcard != null) {
+                bankcard.setBalance(bankcard.getBalance() + entry.getValue());
+                accountClient.updateBalance(bankcard);
+            }
+        }
+        return true;
     }
 }

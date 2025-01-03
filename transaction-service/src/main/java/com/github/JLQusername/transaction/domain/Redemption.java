@@ -10,8 +10,8 @@ import java.util.Date;
 public class Redemption extends Transaction{
     private double redemptionShares;
 
-    public Redemption(Long transactionId, double redemptionShares,long tradingAccountId,
-                      int productId,Date transactionTime, boolean isCancel, long fundAccount, String productName) {
+    public Redemption(Long transactionId, double redemptionShares,long tradingAccountId,long fundAccount,
+                      int productId,String productName, Date transactionTime, boolean isCancel) {
         super(transactionId, tradingAccountId, fundAccount,productId,productName, transactionTime, isCancel);
         this.redemptionShares = redemptionShares;
     }

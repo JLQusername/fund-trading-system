@@ -2,6 +2,7 @@ package com.github.JLQusername.product.controller;
 
 import com.github.JLQusername.api.OurSystem;
 import com.github.JLQusername.common.domain.Result;
+import com.github.JLQusername.api.NetValue;
 import com.github.JLQusername.product.service.ProductService;
 import com.github.JLQusername.api.client.SettleClient;
 
@@ -84,7 +85,6 @@ public class ProductController {
     }
 
 
-
     @GetMapping("/system/transaction-date")
     public Result getTransactionDate() {
         try {
@@ -113,5 +113,23 @@ public class ProductController {
         } catch (Exception e) {
             return Result.error("An error occurred while fetching the transaction date: " + e.getMessage());
         }
+
     }
+
+    @GetMapping("/net_values")
+    public List<NetValue> getLatestNetValues() {
+        return productService.getLatestNetValues();
+    }
+
+    @PostMapping("/net_value/insert")
+    public boolean insertNetValue(@RequestBody NetValue netValue){
+        return productService.insertNetValue(netValue);
+
+    }
+    @GetMapping("/net_value/{productId}/{date}")
+    public Double getNetValue(@PathVariable("productId") Integer productId,
+                       @PathVariable("date") Date date){
+        return productService.getNetValueByProductIdAndDate(productId,date);
+    };
+
 }
