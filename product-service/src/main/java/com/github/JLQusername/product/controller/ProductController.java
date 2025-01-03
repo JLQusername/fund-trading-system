@@ -111,7 +111,7 @@ public class ProductController {
 
     }
 
-    @GetMapping("/net_values")
+    @PostMapping("/net_values")
     public List<NetValue> getLatestNetValues() {
         return productService.getLatestNetValues();
     }
@@ -121,7 +121,7 @@ public class ProductController {
         return productService.insertNetValue(netValue);
 
     }
-    @GetMapping("/net_value/{productId}/{date}")
+    @PostMapping("/net_value/{productId}/{date}")
     public Double getNetValue(@PathVariable("productId") Integer productId,
                        @PathVariable("date") Date date){
         return productService.getNetValueByProductIdAndDate(productId,date);

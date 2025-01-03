@@ -44,12 +44,12 @@ public class TransactionController {
         return transactionService.cancelTransaction(Long.parseLong(transactionId)) ? Result.success() : Result.error("当前交易已超时");
     }
 
-    @GetMapping("/subscriptions/valid")
+    @PostMapping("/subscriptions/valid")
     public List<SubscriptionBO> getValidSubscriptionBOs(@RequestParam Date date) {
         return transactionService.getValidSubscriptionBOs(date);
     }
 
-    @GetMapping("/redemptions/valid")
+    @PostMapping("/redemptions/valid")
     public List<RedemptionBO> getValidRedemptionBOs(@RequestParam Date date) {
         return transactionService.getValidRedemptionBOs(date);
     }

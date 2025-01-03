@@ -11,10 +11,10 @@ import java.util.Map;
 
 @FeignClient("transaction-service")
 public interface TransactionClient {
-    @GetMapping("/transaction/subscriptions/valid")
+    @PostMapping("/transaction/subscriptions/valid")
     List<SubscriptionBO> getValidSubscriptionBOs(@RequestParam("date") Date date);
     
-    @GetMapping("/transaction/redemptions/valid")
+    @PostMapping("/transaction/redemptions/valid")
     List<RedemptionBO> getValidRedemptionBOs(@RequestParam("date") Date date);
     
     @PostMapping("/transaction/subscription/confirm-batch")
