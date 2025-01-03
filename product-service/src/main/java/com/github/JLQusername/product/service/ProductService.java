@@ -15,7 +15,9 @@ public interface ProductService extends IService<Product> {
     Double getNetValueByProductIdAndDate(int productId, Date date);
 
     boolean saveProduct(Product product);
+
     void updateProduct(Product product);
     List<NetValue> getLatestNetValues();
     boolean insertNetValue(NetValue netValue);
+
 }

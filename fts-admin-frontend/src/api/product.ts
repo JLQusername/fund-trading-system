@@ -17,3 +17,21 @@ export function fetchNetValue(productId: number, date: string) {
 export function fetchTransactionDate() {
     return request.get('/settle/system/transaction-date');
 }
+
+export function apiaddProduct(product: Product) {
+    return request.post('/product/add', product);
+}
+
+export function apiUpdateProduct(product: Product): Promise<Product> {
+    return request({
+        url: `/product/${product.productId}`, // 假设这是更新产品的API路径
+        method: 'put', // 使用PUT方法进行更新
+        data: {
+            productName: product.productName,
+            riskLevel: product.riskLevel,
+            productType: product.productType,
+            productStatus: product.productStatus,
+            // 如果有其他字段需要更新，请在此添加
+        }
+    });
+}

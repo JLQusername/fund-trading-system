@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.github.JLQusername.api.OurSystem;
 import com.github.JLQusername.api.client.SettleClient;
 import com.github.JLQusername.api.NetValue;
+import com.github.JLQusername.common.domain.Result;
 import com.github.JLQusername.product.domain.Product;
 import com.github.JLQusername.product.mapper.NetValueMapper;
 import com.github.JLQusername.product.mapper.ProductMapper;
@@ -12,6 +13,7 @@ import com.github.JLQusername.product.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import lombok.RequiredArgsConstructor;
+
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -23,7 +25,10 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ProductServiceImpl extends ServiceImpl<ProductMapper, Product> implements ProductService {
 
-    private final SettleClient settleClient;
+
+
+    @Autowired
+    private SettleClient settleClient;
 
     private final NetValueMapper netValueMapper;
     @Override
@@ -51,8 +56,32 @@ public class ProductServiceImpl extends ServiceImpl<ProductMapper, Product> impl
 
     @Override
     public boolean saveProduct(Product product) {
-        return this.save(product);
+        save(product);
+        System.out.println(product.getProductId());
+
+        // 获取 OurSystem 对象
+        OurSystem ourSystem = settleClient.getSystem();
+
+
+// 创建 NetValue 对象并设置属性
+        NetValue netValue = new NetValue();
+        netValue.setProductId(product.getProductId());
+        netValue.setDate(ourSystem.getTransactionDate()); // 假设 setDate 接受 LocalDate 类型
+        netValue.setNetValue(1.0); // 默认净值为1
+
+        try {
+            // 保存 NetValue 对象到数据库
+            return netValueMapper.insert(netValue) > 0;
+        } catch (Exception e) {
+            // 处理可能发生的异常（例如数据库操作失败）
+            e.printStackTrace();
+            return false;
+        }
+
+
+
     }
+
 
     @Override
     public void updateProduct(Product product) {

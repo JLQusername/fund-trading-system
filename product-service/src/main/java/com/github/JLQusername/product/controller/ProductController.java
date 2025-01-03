@@ -10,13 +10,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import lombok.RequiredArgsConstructor;
 import com.github.JLQusername.product.domain.Product;
-import java.time.OffsetDateTime;
-import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
+
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
+
 
 @RestController
 @RequestMapping("/product")
@@ -50,7 +47,6 @@ public class ProductController {
     public Result getNetValueByProductIdAndDate(
             @PathVariable int productId,
             @PathVariable String date) {
-        try {
             // 将日期字符串转换为Date对象，假设格式为yyyy-MM-dd
             java.util.Date parsedDate = java.sql.Date.valueOf(date);
             Double netValue = productService.getNetValueByProductIdAndDate(productId, parsedDate);
@@ -58,26 +54,25 @@ public class ProductController {
                 return Result.error("No net value found for the given product and date.");
             }
             return Result.success(netValue);
-        } catch (IllegalArgumentException e) {
-            // 捕获日期解析失败的情况
-            return Result.error("Invalid date format. Please use yyyy-MM-dd.");
-        } catch (Exception e) {
-            // 处理其他可能的异常
-            return Result.error("An error occurred while processing your request.");
-        }
+
     }
 
     @PostMapping("/add")
-    public boolean addProduct(@RequestBody Product product) {
-        return productService.saveProduct(product);
+    public Result addProduct(@RequestBody Product product) {
+        boolean res =  productService.saveProduct(product);
+        return res ? Result.success() : Result.error("添加产品失败");
     }
 
+
+
+
     @PutMapping("/{productId}")
-    public Product updateProduct(@PathVariable Integer productId, @RequestBody Product product) {
+    public Result updateProduct(@PathVariable Integer productId, @RequestBody Product product) {
         product.setProductId(productId);
         productService.updateProduct(product);
-        return product;
+        return Result.success(product);
     }
+
 
 
     @PostMapping("/net_values")

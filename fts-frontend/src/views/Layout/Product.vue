@@ -8,7 +8,7 @@
     </div>
 
     <ul class="product-list">
-      <li v-for="product in paginatedProducts" :key="product.productId" @click="showProductDetails(product)" class="product-item">
+      <li v-for="product in paginatedProducts" :key="product.productId" @click="showProductDetails(product)" class="product-item" v-if="product.productStatus === 1">
         <div class="product-details">
           <p>{{ product.productName }}</p>
           <p>产品类型：{{ product.productType || '未指定' }}</p>
@@ -41,7 +41,12 @@
           <dt>产品名称：</dt><dd>{{ selectedProduct.productName }}</dd>
           <dt>产品类型：</dt><dd>{{ selectedProduct.productType || '未指定' }}</dd>
           <dt>风险等级：</dt><dd>{{ selectedProduct.riskLevel !== undefined ? Level(selectedProduct.riskLevel) : '无信息' }}</dd>
-          <dt>产品状态：</dt><dd>{{ selectedProduct.productStatus || '未指定' }}</dd>
+          <dt>产品状态：</dt><dd>{{
+            selectedProduct.productStatus === 0 ? '待启用' :
+                selectedProduct.productStatus === 1 ? '已启用' :
+                    selectedProduct.productStatus === 2 ? '已停用' :
+                        '未知'
+          }}</dd>
           <dt>净值：</dt><dd>{{ selectedProductNetValue !== null ? selectedProductNetValue : '无信息' }}</dd>
         </dl>
       </div>
@@ -117,7 +122,7 @@ export default defineComponent({
       console.log('Clicked product:', product); // 调试信息
       selectedProduct.value = product;
       try {
-        const res = await fetchNetValue(product.productId, '2024-12-16');
+        const res = await fetchNetValue(product.productId, transactionDate.value);
         selectedProductNetValue.value = res.data; // 假设返回的数据结构是直接的净值值
       } catch (error) {
         ElMessage.error('获取净值失败');

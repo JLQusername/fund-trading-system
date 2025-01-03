@@ -1,90 +1,142 @@
 
 <template>
 
-<div class="product-list">
-<h2>产品列表</h2>
-<el-button @click="showAddProductDialog">新增产品</el-button>
-<div style="text-align: center;">
-  <el-input class="input" v-model="searchKeyword" placeholder="请输入关键词" />
-  <el-button class="inputbutton" @click="handleSearch">搜索</el-button>
+  <div class="product-list">
+    <h2>产品列表</h2>
+    <el-button @click="showAddProductDialog">新增产品</el-button>
+    <div style="text-align: center;">
+      <el-input class="input" v-model="searchKeyword" placeholder="请输入关键词" />
+      <el-button class="inputbutton" @click="handleSearch">搜索</el-button>
 
-</div>
-
-<ul class="product-list">
-  <li v-for="product in paginatedProducts" :key="product.productId" @click="showProductDetails(product)" class="product-item">
-    <div class="product-details">
-      <p>{{ product.productName }}</p>
-      <p>产品类型：{{ product.productType || '未指定' }}</p>
-      <p>风险等级：{{ product.riskLevel !== undefined ? product.riskLevel : '无信息' }}</p>
     </div>
-  </li>
-</ul>
 
-<div class="pagination-container">
-  <el-pagination
-      layout="prev, pager, next"
-      :total="totalProducts"
-      :page-size="pageSize"
-      :current-page="currentPage"
-      @current-change="handlePageChange"
-  />
-</div>
+    <ul class="product-list">
+      <li v-for="product in paginatedProducts" :key="product.productId" @click="showProductDetails(product)" class="product-item">
+        <div class="product-details">
+          <p>{{ product.productName }}</p>
+          <p>产品类型：{{ product.productType || '未指定' }}</p>
+          <p>风险等级：{{ product.riskLevel !== undefined ? product.riskLevel : '无信息' }}</p>
+        </div>
+      </li>
+    </ul>
 
-<!-- Product Details Dialog -->
-<el-dialog
-    v-model="dialogVisible"
-    :title="selectedProduct ? selectedProduct.productName : '产品详情'"
-    custom-class="custom-dialog"
-    width="50%"
-    top="15vh"
-    @close="clearSelectedProduct"
->
-  <div v-if="selectedProduct" class="product-details-content">
-    <dl class="product-info">
-      <dt>产品名称：</dt><dd>{{ selectedProduct.productName }}</dd>
-      <dt>产品类型：</dt><dd>{{ selectedProduct.productType || '未指定' }}</dd>
-      <dt>风险等级：</dt><dd>{{ selectedProduct.riskLevel !== undefined ? selectedProduct.riskLevel : '无信息' }}</dd>
-      <dt>产品状态：</dt><dd>{{ selectedProduct.productStatus || '未指定' }}</dd>
-      <dt>净值：</dt><dd>{{ selectedProductNetValue !== null ? selectedProductNetValue : '无信息' }}</dd>
-    </dl>
-  </div>
-  <span slot="footer" class="dialog-footer">
-        <el-button @click="dialogVisible = false">关闭</el-button>
-      </span>
-</el-dialog>
+    <div class="pagination-container">
+      <el-pagination
+          layout="prev, pager, next"
+          :total="totalProducts"
+          :page-size="pageSize"
+          :current-page="currentPage"
+          @current-change="handlePageChange"
+      />
+    </div>
 
-<!-- Add Product Dialog -->
-<el-dialog
-    v-model="addProductDialogVisible"
-    title="新增产品"
-    custom-class="custom-dialog"
-    width="50%"
-    top="15vh"
-    @close="clearAddProductForm"
->
-  <el-form ref="addProductFormRef" :model="addProductForm" label-width="80px">
-    <el-form-item label="产品名称" prop="productName">
-      <el-input v-model="addProductForm.productName" />
-    </el-form-item>
-    <el-form-item label="风险等级" prop="riskLevel">
-      <el-input-number v-model="addProductForm.riskLevel" controls-position="right" :min="1" :max="5" />
-    </el-form-item>
-    <el-form-item label="产品类型" prop="productType">
-      <el-input v-model="addProductForm.productType" />
-    </el-form-item>
-  </el-form>
-  <span slot="footer" class="dialog-footer">
+    <!-- Product Details Dialog -->
+    <el-dialog
+        v-model="dialogVisible"
+        :title="selectedProduct ? selectedProduct.productName : '产品详情'"
+        custom-class="custom-dialog"
+        width="50%"
+        top="15vh"
+        @close="clearSelectedProduct"
+    >
+      <div v-if="!isEditMode" class="product-details-content">
+        <!-- 产品详情视图 -->
+        <dl class="product-info">
+          <dt>产品名称：</dt><dd>{{ selectedProduct?.productName }}</dd>
+          <dt>产品类型：</dt><dd>{{ selectedProduct?.productType || '未指定' }}</dd>
+          <dt>风险等级：</dt><dd>{{ selectedProduct?.riskLevel !== undefined ? selectedProduct?.riskLevel : '无信息' }}</dd>
+          <dt>产品状态：</dt><dd>{{
+            selectedProduct?.productStatus === 0 ? '待启用' :
+                selectedProduct?.productStatus === 1 ? '已启用' :
+                    selectedProduct?.productStatus === 2 ? '已停用' :
+                        '未知'
+          }}</dd>
+          <dt>净值：</dt><dd>{{ selectedProductNetValue !== null ? selectedProductNetValue : '无信息' }}</dd>
+        </dl>
+      </div>
+      <el-form v-else ref="editProductFormRef" :model="addProductForm" label-width="80px">
+        <!-- 编辑产品视图 -->
+        <el-form-item label="产品名称" prop="productName">
+          <el-input v-model="addProductForm.productName" />
+        </el-form-item>
+        <el-form-item label="风险等级" prop="riskLevel">
+          <el-input-number v-model="addProductForm.riskLevel" controls-position="right" :min="1" :max="5" />
+        </el-form-item>
+        <el-form-item label="产品类型" prop="productType">
+          <el-input v-model="addProductForm.productType" />
+        </el-form-item>
+        <el-form-item label="产品状态" prop="productStatus">
+          <el-select v-model="addProductForm.productStatus" placeholder="请选择">
+            <el-option
+                v-for="item in productStatusOptions"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value">
+            </el-option>
+          </el-select>
+        </el-form-item>
+      </el-form>
+
+      <span slot="footer" class="dialog-footer">
+    <el-button v-if="!isEditMode" @click="startEditProduct">修改产品</el-button>
+    <template v-else>
+
+      <el-button type="primary" @click="confirmEditProduct">确定</el-button>
+    </template>
+    <el-button @click="dialogVisible = false">关闭</el-button>
+  </span>
+    </el-dialog>
+
+    <!-- Add Product Dialog -->
+    <el-dialog
+        v-model="addProductDialogVisible"
+        title="新增产品"
+        custom-class="custom-dialog"
+        width="50%"
+        top="15vh"
+        @close="clearAddProductForm"
+    >
+      <el-form ref="addProductFormRef" :model="addProductForm" label-width="80px">
+        <el-form-item label="产品名称" prop="productName">
+          <el-input v-model="addProductForm.productName" />
+        </el-form-item>
+        <el-form-item label="风险等级" prop="riskLevel">
+          <el-input-number v-model="addProductForm.riskLevel" controls-position="right" :min="1" :max="5" />
+        </el-form-item>
+        <el-form-item label="产品类型" prop="productType">
+          <el-input v-model="addProductForm.productType" />
+        </el-form-item>
+        <el-form-item label="产品状态" prop="productStatus">
+          <el-select v-model="addProductForm.productStatus" placeholder="请选择">
+            <el-option
+                v-for="item in productStatusOptions"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value">
+            </el-option>
+          </el-select>
+        </el-form-item>
+
+      </el-form>
+      <span slot="footer" class="dialog-footer">
         <el-button @click="cancelAddProduct">取消</el-button>
         <el-button type="primary" @click="confirmAddProduct">确定</el-button>
       </span>
-</el-dialog>
-</div>
+    </el-dialog>
+  </div>
 </template>
 
 <script lang="ts">
 import { defineComponent, ref, computed, onMounted } from 'vue';
 import { ElMessage } from 'element-plus';
-import { fetchProducts, searchProducts,fetchNetValue,fetchTransactionDate } from '@/api/product';
+import {
+  fetchProducts,
+  searchProducts,
+  fetchNetValue,
+  fetchTransactionDate,
+  apiaddProduct,
+  apiUpdateProduct
+} from '@/api/product';
 import type { Product } from '@/types/product';
 
 export default defineComponent({
@@ -103,10 +155,11 @@ export default defineComponent({
     const transactionDate = ref<string | null>(null); // 新增：存储交易日期
 
     const addProductDialogVisible = ref(false); // 控制新增产品弹窗的显示
-    const addProductForm = ref({ // 新增产品的表单数据
-      productName: '',
+    const addProductForm = ref({
+      productName: 'moren',
       riskLevel: 0,
-      productType: ''
+      productType: 'moren',
+      productStatus: 0 // 默认状态为待启用
     });
 
     // 更新 paginatedProducts 的计算属性
@@ -153,7 +206,7 @@ export default defineComponent({
       console.log('Clicked product:', product); // 调试信息
       selectedProduct.value = product;
       try {
-        const res = await fetchNetValue(product.productId, '2024-12-16');
+        const res = await fetchNetValue(product.productId, transactionDate.value);
         selectedProductNetValue.value = res.data; // 假设返回的数据结构是直接的净值值
       } catch (error) {
         ElMessage.error('获取净值失败');
@@ -199,10 +252,11 @@ export default defineComponent({
           productName: addProductForm.value.productName,
           riskLevel: addProductForm.value.riskLevel,
           productType: addProductForm.value.productType,
-          productStatus: 0 // 自动设置为零
+          productStatus: addProductForm.value.productStatus // 使用用户选择的状态
         };
-
+        console.log('Submitting product:', newProduct); // 打印提交的产品对象，用于调试
         const res = await addProduct(newProduct);
+
         products.value.push(res.data as Product);
         totalProducts.value++;
         addProductDialogVisible.value = false;
@@ -217,25 +271,77 @@ export default defineComponent({
       addProductForm.value = {
         productName: '',
         riskLevel: 0,
-        productType: ''
+        productType: '',
+        productStatus: 0 // 默认状态为待启用
       };
     };
 
     const addProduct = async (product: Product) => {
       try {
-        const res = await fetch('/api/products', { // 注意这里的URL应根据实际API路径调整
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(product)
-        });
-        if (!res.ok) throw new Error('Network response was not ok');
-        return res.json();
+        // 直接调用已有的 API 函数
+        const result = await apiaddProduct(product);
+        products.value.push(product);
+        console.log('Product added:', result);
+        return result;
       } catch (error) {
-        throw error;
+        console.error('Failed to add product:', error);
+        throw error; // 继续抛出错误，以便调用者可以处理
       }
     };
+
+    const productStatusOptions = [
+      { value: 0, label: '待启用' },
+      { value: 1, label: '已启用' }
+    ];
+
+    const isEditMode = ref(false);
+
+    const startEditProduct = () => {
+      if (selectedProduct.value) {
+        Object.assign(addProductForm.value, selectedProduct.value); // 将选中产品的数据复制到表单中
+        isEditMode.value = true;
+      }
+    };
+
+    const cancelEditProduct = () => {
+      clearAddProductForm();
+      isEditMode.value = false;
+      dialogVisible.value = false; // 关闭弹窗
+    };
+
+    const confirmEditProduct = async () => {
+      if (!addProductForm.value.productName || !addProductForm.value.riskLevel || !addProductForm.value.productType) {
+        ElMessage.error('请填写所有字段');
+        return;
+      }
+
+      try {
+        const updatedProduct = {
+          productId: selectedProduct.value?.productId,
+          productName: addProductForm.value.productName,
+          riskLevel: addProductForm.value.riskLevel,
+          productType: addProductForm.value.productType,
+          productStatus: addProductForm.value.productStatus
+        };
+        console.log('Submitting update:', updatedProduct);
+
+        // 调用API进行更新
+        await apiUpdateProduct(updatedProduct);
+
+        // 更新本地产品列表
+        products.value = products.value.map(product =>
+            product.productId === updatedProduct.productId ? updatedProduct : product
+        );
+
+        ElMessage.success('修改产品成功');
+        isEditMode.value = false;
+        clearSelectedProduct();
+        dialogVisible.value = false; // 修改成功后关闭弹窗
+      } catch (error) {
+        ElMessage.error('修改产品失败');
+      }
+    };
+
 
     onMounted(() => {
       loadProducts();
@@ -265,11 +371,17 @@ export default defineComponent({
       cancelAddProduct,
       confirmAddProduct,
       clearAddProductForm,
-      addProduct // 如果您选择保留这个模拟的方法，则也需返回它
+      addProduct, // 如果您选择保留这个模拟的方法，则也需返回它
+      productStatusOptions, // 新增返回值
+      isEditMode,
+      startEditProduct,
+      cancelEditProduct,
+      confirmEditProduct,
     };
   },
 });
 </script>
+
 
 <style scoped>
 .product-list {
