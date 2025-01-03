@@ -29,8 +29,8 @@ public class ProductServiceImpl extends ServiceImpl<ProductMapper, Product> impl
     }
 
     @Override
-    public List<Product> getByProductIdAndDate(int productId, Date date) {
-        return baseMapper.getByProductIdAndDate(productId, date);
+    public Double getNetValueByProductIdAndDate(int productId, Date date) {
+        return this.baseMapper.getNetValueByProductIdAndDate(productId, date);
     }
 
     @Override
