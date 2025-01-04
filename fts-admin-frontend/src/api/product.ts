@@ -18,7 +18,7 @@ export function fetchTransactionDate() {
     return request.get('/settle/system/transaction-date');
 }
 
-export function apiaddProduct(product: Product) {
+export function apiAddProduct(product: Product) {
     return request.post('/product/add', product);
 }
 

@@ -32,8 +32,8 @@ const getProductInfo = () => {
   }
 };
 const submitRedemption = async () => {
-  //验证amount是合法数字且大于0且小数点后无法超过2位
-  if(isNaN(form.value.shares) || form.value.shares <= 0 || form.value.shares.toString().split('.')[1]?.length > 2){
+  //验证amount是合法数字且大于0且小数点后无法超过4位
+  if(isNaN(form.value.shares) || form.value.shares <= 0 || form.value.shares.toString().split('.')[1]?.length > 4){
     return ElMessage.warning('请输入正确的份额');
   }
   const data: RedemptionDTO = {

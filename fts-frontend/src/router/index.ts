@@ -8,7 +8,6 @@ import LayoutVue from '@/views/Layout.vue';
 import ProductVue from '@/views/layout/Product.vue';
 import SubscriptionVue from '@/views/layout/Subscription.vue';
 import RedemptionVue from '@/views/layout/Redemption.vue';
-import IncomeVue from '@/views/layout/Income.vue';
 import TransactionsVue from '@/views/layout/Transactions.vue';
 
 //定义路由关系
@@ -21,7 +20,6 @@ const routes:RouteRecordRaw[] = [
         { path: '/product', component: ProductVue },
         { path: '/subscription', component: SubscriptionVue },
         { path: '/redemption', component: RedemptionVue},
-        { path: '/income', component: IncomeVue },
         { path: '/transactions', component: TransactionsVue }
     ]}
 ]

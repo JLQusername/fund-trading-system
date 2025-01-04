@@ -20,9 +20,6 @@ const form = ref({ ...userInfo });
         <el-menu-item index="/product">
           <span>产品列表</span>
         </el-menu-item>
-        <el-menu-item index="/income">
-          <span>当前收入</span>
-        </el-menu-item>
         <el-menu-item index="/transactions">
           <span>交易记录</span>
         </el-menu-item>
