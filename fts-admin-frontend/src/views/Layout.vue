@@ -32,6 +32,9 @@ const logout = () => {
         <el-menu-item index="/product">
           <span>产品列表</span>
         </el-menu-item>
+        <el-menu-item index="/settle">
+          <span>系统清算</span>
+        </el-menu-item>
       </el-menu>
     </el-aside>
     <!-- 右侧主区域 -->

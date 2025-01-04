@@ -240,13 +240,13 @@ const state = (n : number | undefined) => {
           <el-input v-model="selectedProduct.productType" readonly />
         </el-form-item>
         <el-form-item label="风险等级" prop="riskLevel">
-          <el-input-number v-model="selectedProduct.riskLevel" :min="1" :max="5" readonly />
+          <el-input-number v-model="selectedProduct.riskLevel" :min="0" :max="4" readonly />
         </el-form-item>
         <el-form-item label="产品状态" prop="productStatus">
           <el-input :value="state(selectedProduct.productStatus)" readonly />
         </el-form-item>
         <el-form-item label="净值" prop="netValue">
-          <el-input v-model="selectedProductNetValue" readonly />
+          <el-input :value="selectedProductNetValue !== null ? selectedProductNetValue.toFixed(4) : ''" readonly />
         </el-form-item>
       </el-form>
       <el-form v-else ref="editProductFormRef" :model="addProductForm" label-width="80px">
@@ -254,7 +254,7 @@ const state = (n : number | undefined) => {
           <el-input v-model="addProductForm.productName" />
         </el-form-item>
         <el-form-item label="风险等级" prop="riskLevel">
-          <el-input-number v-model="addProductForm.riskLevel" controls-position="right" :min="1" :max="5" />
+          <el-input-number v-model="addProductForm.riskLevel" controls-position="right" :min="0" :max="4" />
         </el-form-item>
         <el-form-item label="产品类型" prop="productType">
           <el-input v-model="addProductForm.productType" />

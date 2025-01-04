@@ -187,7 +187,7 @@ const redemption = (productId:number,productName:string) => {
           <dt>产品名称：</dt><dd>{{ selectedProduct.productName }}</dd>
           <dt>产品类型：</dt><dd>{{ selectedProduct.productType || '未指定' }}</dd>
           <dt>风险等级：</dt><dd>{{ Level(selectedProduct.riskLevel) }}</dd>
-          <dt>净值：</dt><dd>{{ selectedProductNetValue !== null ? selectedProductNetValue : '无信息' }}</dd>
+          <dt>净值：</dt><dd>{{ selectedProductNetValue !== null ? selectedProductNetValue.toFixed(4) : '无信息' }}</dd>
         </dl>
       </div>
       <template #footer>

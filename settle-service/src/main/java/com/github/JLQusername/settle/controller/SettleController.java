@@ -24,9 +24,9 @@ import java.util.Locale;
 public class SettleController {
     private final SettleService settleService;
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
     @Autowired
     private SettleClient settleClient;
-
 
     @PostMapping("/system")
     public OurSystem getSystem() {
@@ -35,6 +35,11 @@ public class SettleController {
     @PostMapping("/init")
     public Result initializeDay() {
         return settleService.initializeDay() ? Result.success() : Result.error("日初始化失败");
+    }
+
+    @GetMapping
+    public Result getFrontSystem() {
+        return Result.success(settleService.getSystem());
     }
 
     @PostMapping("/market")
@@ -66,7 +71,7 @@ public class SettleController {
     public Result getTransactionDate() {
         try {
             // 获取 OurSystem 对象
-            OurSystem ourSystem = settleClient.getSystem();
+            OurSystem ourSystem = settleService.getNetValueSystem();
             String rawDateStr = ourSystem.getTransactionDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate().format(formatter);
             return Result.success(rawDateStr);
         } catch (DateTimeParseException e) {

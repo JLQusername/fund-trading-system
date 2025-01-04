@@ -5,6 +5,7 @@ import ResetPwVue from '@/views/Resetpw.vue'
 import UserInfoVue from '@/views/layout/UserInfo.vue';
 import LayoutVue from '@/views/Layout.vue';
 import ProductVue from '@/views/layout/Product.vue';
+import SettleVue from '@/views/layout/Settle.vue';
 //定义路由关系
 const routes:RouteRecordRaw[] = [
     { path: '/login', component: LoginVue },
@@ -12,6 +13,7 @@ const routes:RouteRecordRaw[] = [
     { path: '/', component: LayoutVue, redirect:'/info',children:[
         { path: '/info', component: UserInfoVue },
         { path: '/product', component: ProductVue },
+        { path: '/settle', component: SettleVue }
     ]}
 ]
 //创建路由器

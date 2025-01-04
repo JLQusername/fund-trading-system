@@ -54,7 +54,6 @@ public class ProductController {
                 return Result.error("No net value found for the given product and date.");
             }
             return Result.success(netValue);
-
     }
 
     @PostMapping("/add")
@@ -63,17 +62,12 @@ public class ProductController {
         return res ? Result.success() : Result.error("添加产品失败");
     }
 
-
-
-
     @PutMapping("/{productId}")
     public Result updateProduct(@PathVariable Integer productId, @RequestBody Product product) {
         product.setProductId(productId);
         productService.updateProduct(product);
         return Result.success(product);
     }
-
-
 
     @PostMapping("/net_values")
     public List<NetValue> getLatestNetValues() {

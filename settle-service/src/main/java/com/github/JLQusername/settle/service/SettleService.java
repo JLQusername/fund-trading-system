@@ -10,4 +10,6 @@ public interface SettleService {
     boolean confirmRedemptions();
     boolean stopDailyApplications();
     boolean exportData();
+
+    OurSystem getNetValueSystem();
 }

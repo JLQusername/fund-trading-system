@@ -172,7 +172,6 @@ public class SettleServiceImpl implements SettleService {
                 System.out.println("amount: "+amount);
                 transactionIdToAmount.put(bo.getTransactionId(), amount);
             }
-            
             // 批量确认赎回
             return transactionClient.confirmRedemptionBatch(transactionIdToAmount);
         } catch (Exception e) {
@@ -180,6 +179,7 @@ public class SettleServiceImpl implements SettleService {
             return false;
         }
     }
+
     @Override
     public boolean stopDailyApplications() {
         OurSystem system = getSystem();
@@ -195,7 +195,6 @@ public class SettleServiceImpl implements SettleService {
             log.error("尚未停止当日申请");
             return false;
         }
-
         try {
             QueryWrapper<OurSystem> updateWrapper = new QueryWrapper<>();
             updateWrapper.eq("transaction_date", system.getTransactionDate());
@@ -205,5 +204,15 @@ public class SettleServiceImpl implements SettleService {
             log.error("数据导出失败", e);
             return false;
         }
+    }
+
+    @Override
+    public OurSystem getNetValueSystem() {
+        QueryWrapper<OurSystem> queryWrapper = new QueryWrapper<>();
+        queryWrapper.orderByDesc("transaction_date").last("limit 1");
+        OurSystem system = systemMapper.selectOne(queryWrapper);
+        // 获取前一交易日
+        system.setTransactionDate(getPreviousTradeDate());
+        return system;
     }
 }
