@@ -11,5 +11,5 @@ export function submitRedemptionService(data: RedemptionDTO) {
 }
 
 export function cancelService(transactionId: string){
-    return request.post('/transaction/cancel', { param: {transactionId} });
+    return request.post('/transaction/cancel',{}, { params: {transactionId} });
 }

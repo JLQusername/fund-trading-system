@@ -31,6 +31,13 @@ const state =  (isCancel: boolean,canCancel: boolean): string => {
 }
 const cancel = async (transactionId: string) => {
     await cancelService(transactionId);
+    Transactions.value = Transactions.value.map(transaction => {
+      if(transaction.transactionId === transactionId){
+        transaction.cancel = true;
+        transaction.canCancel = false;
+      }
+      return transaction;
+    });
     return ElMessage.success('撤单成功');
 };
 </script>
@@ -58,7 +65,8 @@ const cancel = async (transactionId: string) => {
       </el-table-column>
       <el-table-column prop="canCancel" label="操作" align="center">
         <template #default="{ row }">
-          <el-button type="danger" @click="cancel(row.transactionId)" v-if="row.canCancel">撤单</el-button>
+          <el-button type="danger" @click="cancel(row.transactionId);" v-if="row.canCancel">撤单</el-button>
+          <span v-else>不可操作</span>
         </template>
       </el-table-column>
     </el-table>
