@@ -18,6 +18,7 @@ import com.github.JLQusername.transaction.mapper.HoldingMapper;
 import com.github.JLQusername.transaction.mapper.RedemptionMapper;
 import com.github.JLQusername.transaction.mapper.SubscriptionMapper;
 import com.github.JLQusername.transaction.service.TransactionService;
+import io.seata.spring.annotation.GlobalTransactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -39,6 +40,7 @@ public class TransactionServiceImpl implements TransactionService {
     private final AccountClient accountClient;
     private final SettleClient settleClient;
 
+    @GlobalTransactional
     @Override
     public long submitSubscription(SubscriptionDTO subscriptionDTO) {
 //        if(productClient.getLevel(subscriptionDTO.getProductId()) > subscriptionDTO.getRiskLevel())
@@ -53,6 +55,8 @@ public class TransactionServiceImpl implements TransactionService {
                 subscriptionDTO.getProductId(),subscriptionDTO.getProductName(),date,false);
         subscriptionMapper.insert(subscription);
         accountClient.updateBalance(bankcard);
+        if(accountClient.getBankcard(Long.parseLong(subscriptionDTO.getTradingAccountId())).getBalance() < 0)
+            throw new RuntimeException("余额不足");
         return subscription.getTransactionId();
     }
 
@@ -91,9 +95,12 @@ public class TransactionServiceImpl implements TransactionService {
         redemptionMapper.insert(redemption);
         holding.setShares(holding.getShares() - redemptionDTO.getShares());
         holdingMapper.updateById(holding);
+        if(getHolding(Long.parseLong(redemptionDTO.getTradingAccountId()), redemptionDTO.getProductId()).getShares() < 0)
+            throw new RuntimeException("份额不足");
         return redemption.getTransactionId();
     }
 
+    @GlobalTransactional
     @Override
     public boolean cancelTransaction(long transactionId) {
 //        Subscription subscription = subscriptionMapper.selectById(transactionId);
@@ -129,6 +136,9 @@ public class TransactionServiceImpl implements TransactionService {
             accountClient.updateBalance(bankcard);
             UpdateWrapper<Subscription> wrapper = new UpdateWrapper<>();
             wrapper.eq("transaction_id", transactionId).set("is_cancel", true);
+            if(system.isHasExportedApplicationData() ||
+                    system.getTransactionDate().getTime() - subscription.getApplicationTime().getTime() >= 1000 * 60 * 60 * 24)
+                throw new RuntimeException("时间已过");
             return subscriptionMapper.update(null, wrapper) > 0;
         }else {
             Redemption redemption = redemptionMapper.selectById(transactionId);
@@ -140,6 +150,9 @@ public class TransactionServiceImpl implements TransactionService {
             holdingMapper.updateById(holding);
             UpdateWrapper<Redemption> wrapper = new UpdateWrapper<>();
             wrapper.eq("transaction_id", transactionId).set("is_cancel", true);
+            if(system.isHasExportedApplicationData() ||
+                    system.getTransactionDate().getTime() - redemption.getApplicationTime().getTime() >= 1000 * 60 * 60 * 24)
+                throw new RuntimeException("时间已过");
             return redemptionMapper.update(null, wrapper) > 0;
         }
     }
